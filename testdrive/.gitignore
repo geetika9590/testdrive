@@ -47,6 +47,6 @@ build/*
 ig-webcms-core/build/*
 ig-webcms-ui/build/*
 
-.idea/
+.idea/*
 
 mvn.log
