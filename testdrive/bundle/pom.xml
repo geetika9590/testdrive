@@ -19,10 +19,15 @@
     <packaging>bundle</packaging>
     <name>AWS Testdrive programme Bundle</name>
 
+
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.dam</groupId>
+            <artifactId>cq-dam-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -33,12 +38,16 @@
             <artifactId>org.apache.felix.scr.annotations</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>biz.aQute</groupId>
             <artifactId>bndlib</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.json</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -60,7 +69,184 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.commons.osgi.wrapper</groupId>
+            <artifactId>com.day.commons.osgi.wrapper.commons-httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq</groupId>
+            <artifactId>cq-content-sync</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.wcm</groupId>
+            <artifactId>cq-wcm-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.granite</groupId>
+            <artifactId>com.adobe.granite.replication.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq</groupId>
+            <artifactId>cq-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.event</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.day.cqse</groupId>-->
+            <!--<artifactId>cqse-httpservice</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <bundle.import.package>com.package.api,*</bundle.import.package>
+        <bundle.private.package>com.package.impl.ClassImpl</bundle.private.package>
+        <bundle.export.package>com.ig.testdrive.*</bundle.export.package>
+        <bundle.dynamicImport.package>
+            com.ibm.uvm.tools,
+            com.jcraft.jsch,
+            com.sun.javadoc,
+            com.sun.jersey.api,
+            com.sun.jersey.api.container,
+            com.sun.jersey.api.core,
+            com.sun.jersey.core.spi.component,
+            com.sun.jersey.server.impl.inject,
+            com.sun.jersey.spi.container,
+            com.sun.jersey.spi.container.servlet,
+            com.sun.jersey.spi.inject,
+            com.sun.jndi.ldap,
+            com.sun.org.apache.xml.internal.serialize,
+            com.sun.tools.doclets.standard,
+            com.sun.jdmk.comm,
+            com.sun.management,
+            com.sun.msv.grammar,
+            com.sun.msv.grammar.trex,
+            com.sun.msv.reader,
+            com.sun.msv.reader.trex.ng,
+            com.sun.msv.reader.util,
+            com.sun.msv.verifier,
+            com.sun.msv.verifier.regexp,
+            com.sun.msv.util,
+            com.vividsolutions.jts.algorithm,
+            com.vividsolutions.jts.geom,
+            com.vividsolutions.jts.io,
+            com.vividsolutions.jts.operation.union,
+            com.vividsolutions.jts.operation.valid,
+            com.vividsolutions.jts.simplify,
+            com.vividsolutions.jts.util,
+            javax.jmdns,
+            jdiff,
+            jline,
+            org.apache.avro,
+            org.apache.avro.data,
+            org.apache.avro.file,
+            org.apache.avro.generic,
+            org.apache.avro.io,
+            org.apache.avro.reflect,
+            org.apache.avro.specific,
+            javax.ws.rs,
+            javax.ws.rs.core,
+            javax.ws.rs.ext,
+            org.apache.commons,
+            org.apache.commons.configuration,
+            org.apache.commons.daemon,
+            org.apache.commons.net.ftp,
+            org.apache.commons.net.util,
+            org.apache.jasper.compiler,
+            org.apache.jasper.runtime,
+            org.apache.lucene.expressions,
+            org.apache.lucene.expressions.js,
+            org.apache.lucene.sandbox.queries,
+            org.apache.tools.ant,
+            org.apache.tools.ant.types,
+            org.codehaus.jackson,
+            org.codehaus.jackson.map,
+            org.codehaus.jackson.node,
+            org.codehaus.jackson.type,
+            org.codehaus.jackson.util,
+            org.eclipse.jetty.server,
+            org.eclipse.jetty.server.bio,
+            org.eclipse.jetty.server.handler,
+            org.eclipse.jetty.server.nio,
+            org.eclipse.jetty.server.session,
+            org.eclipse.jetty.server.ssl,
+            org.eclipse.jetty.servlet,
+            org.eclipse.jetty.util.component,
+            org.eclipse.jetty.util.log,
+            org.eclipse.jetty.util.ssl,
+            org.eclipse.jetty.util.thread,
+            org.jets3t.service,
+            org.jets3t.service.impl.rest.httpclient,
+            org.jets3t.service.model,
+            org.jets3t.service.security,
+            org.joda.convert,
+            org.mortbay.io,
+            org.mortbay.jetty,
+            org.mortbay.jetty.handler,
+            org.mortbay.jetty.nio,
+            org.mortbay.jetty.security,
+            org.mortbay.jetty.servlet,
+            org.mortbay.jetty.webapp,
+            org.mortbay.thread,
+            org.mortbay.util,
+            org.mortbay.util.ajax,
+            org.znerd.xmlenc,
+            sun.net.dns,
+            sun.net.util,
+            org.apache.jasper,
+            org.apache.lucene.expressions.*,
+            com.sun.msv.datatype,
+            com.sun.msv.datatype.xsd,
+            com.vividsolutions.jts.geom.impl,
+            com.vividsolutions.jts.geom.prep,
+            org.antlr.stringtemplate,
+            org.apache.commons.beanutils,
+            org.apache.commons.digester,
+            org.apache.commons.digester.substitution,
+            org.apache.commons.digester.xmlrules,
+            org.apache.commons.jxpath,
+            org.apache.commons.jxpath.ri,
+            org.apache.commons.jxpath.ri.compiler,
+            org.apache.commons.jxpath.ri.model,
+            org.apache.tools.ant.taskdefs,
+            org.gjt.xpp,
+            org.jaxen,
+            org.jaxen.dom4j,
+            org.jaxen.pattern,
+            org.jaxen.saxpath,
+            org.mortbay.log,
+            org.objectweb.asm.tree,
+            org.xmlpull.v1,
+            javax.jms,
+            javax.portlet,
+            javax.servlet.annotation ,
+            javax.servlet.descriptor ,
+            org.apache.log,
+            org.jboss.netty.bootstrap,
+            org.jboss.netty.buffer,
+            org.jboss.netty.channel,
+            org.jboss.netty.channel.group,
+            org.jboss.netty.channel.socket.nio,
+            org.relaxng.datatype,
+            org.relaxing.datatype,
+            sun.misc
+        </bundle.dynamicImport.package>
+    </properties>
+
 
     <!-- ====================================================================== -->
     <!-- B U I L D D E F I N I T I O N -->
@@ -86,6 +272,13 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.ig.testdrive-bundle</Bundle-SymbolicName>
+                        <!--<Import-Package>${bundle.import.package}</Import-Package>-->
+                        <Export-Package>${bundle.export.package}</Export-Package>
+                        <DynamicImport-Package>${bundle.dynamicImport.package}</DynamicImport-Package>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+
+                <!--<DynamicImport-Package>${bundle.dynamicImport.package}</DynamicImport-Package>-->
                     </instructions>
                 </configuration>
             </plugin>

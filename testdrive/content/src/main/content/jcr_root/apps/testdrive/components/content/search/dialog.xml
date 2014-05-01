@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Dialog"
+    title="Solr Search Configuration"
+    xtype="dialog">
+    <items
+        jcr:primaryType="cq:Widget"
+        xtype="tabpanel">
+        <items jcr:primaryType="cq:WidgetCollection">
+            <tab1
+                jcr:primaryType="cq:Panel"
+                title="Solr Server Information">
+                <items jcr:primaryType="cq:WidgetCollection">
+                    <ServerUrl
+                        jcr:primaryType="cq:Widget"
+                        fieldLabel="Solr Core Name"
+                        name="./solrCore"
+                        xtype="textfield"/>
+                    <MaxRows
+                        jcr:primaryType="cq:Widget"
+                        fieldLabel="Max No. of Results to be fetched"
+                        name="./maxRows"
+                        xtype="textfield"/>
+                    <EnableFacet
+                        jcr:primaryType="cq:Widget"
+                        fieldLabel="Enable Faceting"
+                        name="./isFacet"
+                        type="checkbox"
+                        xtype="selection">
+                        <listeners
+                            jcr:primaryType="nt:unstructured"
+                            loadcontent="function(field,rec,path){&#xa; if(field.getValue()==&quot;true&quot;){&#xa; &#x9;var facetFields=field.findParentByType('dialog').getField(&quot;./facetFields&quot;);&#xa; &#x9;facetFields.setVisible(true);&#xa; }&#xa; else{&#xa; &#x9;var facetFields=field.findParentByType('dialog').getField(&quot;./facetFields&quot;);&#xa; &#x9;facetFields.setVisible(false);&#xa; };}"
+                            selectionchanged="function(field,rec,path){&#xa; if(field.getValue()==&quot;true&quot;){&#xa; &#x9;var facetFields=field.findParentByType('dialog').getField(&quot;./facetFields&quot;);&#xa; &#x9;facetFields.setVisible(true);&#xa; }&#xa; else{&#xa; &#x9;var facetFields=field.findParentByType('dialog').getField(&quot;./facetFields&quot;);&#xa; &#x9;facetFields.setVisible(false);&#xa; };}"/>
+                    </EnableFacet>
+                    <FacetFields
+                        jcr:primaryType="cq:Widget"
+                        fieldDescription="[Press + to add more fields.]"
+                        fieldLabel="Enter the Facet Fields"
+                        name="./facetFields"
+                        width="[100]"
+                        xtype="[multifield]">
+                        <fieldConfig
+                            jcr:primaryType="nt:unstructured"
+                            xtype="textfield"
+                            allowBlank="false"/>
+                    </FacetFields>
+                </items>
+            </tab1>
+        </items>
+    </items>
+</jcr:root>

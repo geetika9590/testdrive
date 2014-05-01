@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
     <filter root="/apps/testdrive"/>
+    <filter root="/etc/clientlibs/testdrive"/>
+    <filter root="/etc/designs/testdrive"/>
+    <filter root="/etc/designs/testdrive/image"/>
 </workspaceFilter>

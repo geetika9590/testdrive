@@ -42,6 +42,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.day.cq.dam</groupId>
+                <artifactId>cq-dam-api</artifactId>
+                <version>5.6.6</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.compendium</artifactId>
                 <version>4.2.0</version>
@@ -62,7 +68,13 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.5.10</version>
+                <version>1.6.4</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.commons.json</artifactId>
+                <version>2.0.6</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -95,6 +107,72 @@
                 <version>4.8.1</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-core</artifactId>
+                <version>4.7.0</version>
+                <scope>compile</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.orbit</groupId>
+                        <artifactId>javax.servlet</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-solrj</artifactId>
+                <version>4.7.0</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.day.commons.osgi.wrapper</groupId>
+                <artifactId>com.day.commons.osgi.wrapper.commons-httpclient</artifactId>
+                <version>3.1.0.018</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.engine</artifactId>
+                <version>2.2.8</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.day.cq</groupId>
+                <artifactId>cq-content-sync</artifactId>
+                <version>5.6.4</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.granite</groupId>
+                <artifactId>com.adobe.granite.replication.core</artifactId>
+                <version>5.12.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.day.cq.wcm</groupId>
+                <artifactId>cq-wcm-api</artifactId>
+                <version>5.6.6</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.day.cq</groupId>
+                <artifactId>cq-commons</artifactId>
+                <version>5.6.4</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.event</artifactId>
+                <version>3.1.5-R1485539</version>
+                <scope>provided</scope>
+            </dependency>
+          <!--  <dependency>
+                <groupId>com.day.cqse</groupId>
+                <artifactId>cqse-httpservice</artifactId>
+                <version>4.1.52</version>
+                <scope>provided</scope>
+            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
@@ -133,11 +211,21 @@
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>2.3.7</version>
                 </plugin>
-                <plugin>
+               <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-compiler-plugin</artifactId>
+                      <version>3.1</version>
+               </plugin>
+               <!-- <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
-                </plugin>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                    </configuration>
+                </plugin>-->
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
