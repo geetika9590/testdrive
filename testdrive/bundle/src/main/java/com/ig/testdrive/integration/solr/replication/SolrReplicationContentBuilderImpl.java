@@ -108,19 +108,6 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
         return blankData(factory);
     }
 
-    private String getXMLData(ResourceResolver resourceResolver, String xmlDataUrl) throws Exception {
-
-        Asset asset = getSpecificAsset(resourceResolver, xmlDataUrl);
-        HashMap metadata = (HashMap) asset.getMetadata();
-        StringBuffer xmlData = new StringBuffer("<add>\n" +
-                "    <doc>\n" +
-                "        <field name=\"id\">" + xmlDataUrl + "</field>\n" +
-                "        <field name=\"text_data\">" + "random text" + "</field>\n" +
-                "    </doc>\n" +
-                "</add>");
-        log.info("Xml generated is" + xmlData);
-        return xmlData.toString();
-    }
 
     private Page getSpecificPage(ResourceResolver resourceResolver, String pageUri) {
 
@@ -139,11 +126,7 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
 
         if (!solrUri.equals("")) {
             if (operation.equals(ReplicationActionType.ACTIVATE)) {
-                if (resType.equalsIgnoreCase("page")) {
                     return pageActivationEvent(resourceResolver, currentResUri, factory);
-                } else if (resType.equalsIgnoreCase("asset")) {
-                    return pageActivationEvent(resourceResolver, currentResUri, factory);
-                }
             } else if (operation.equals(ReplicationActionType.DEACTIVATE)) {
                 return deactivationEvent(currentResUri, solrUri, factory);
             } else if (operation.equals(ReplicationActionType.DELETE)) {
@@ -153,14 +136,6 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
         return blankData(factory);
     }
 
-    private ReplicationContent assetActivationEvent(ResourceResolver resourceResolver, String currentResUri, ReplicationContentFactory factory) throws Exception {
-
-        String xmlData = getXMLData(resourceResolver, currentResUri);
-
-        log.info("\n ========xml Data for page URI {} = \n {} \n", currentResUri, xmlData);
-//        xmlData="";
-        return (!xmlData.equals("")) ? create(factory, xmlData) : blankData(factory);
-    }
 
     private ReplicationContent pageActivationEvent(ResourceResolver resourceResolver, String currentPageUri, ReplicationContentFactory factory) throws Exception {
 
@@ -168,7 +143,6 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
         String xmlData = cqOperationsForSolrSearch.getXMLData(resourceResolver, currentPageUri);
 
         log.info("\n ========xml Data for page URI {} = \n {} \n", currentPageUri, xmlData);
-//        xmlData="";
         return (!xmlData.equals("")) ? create(factory, xmlData) : blankData(factory);
     }
 

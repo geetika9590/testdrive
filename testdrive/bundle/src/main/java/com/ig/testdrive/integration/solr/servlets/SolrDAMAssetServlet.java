@@ -1,23 +1,20 @@
 package com.ig.testdrive.integration.solr.servlets;
 
 import com.day.cq.dam.api.Asset;
+import com.ig.testdrive.commons.util.*;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.felix.scr.annotations.*;
-import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.*;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.apache.sling.commons.json.JSONArray;
-import org.apache.sling.commons.json.JSONObject;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
 import javax.servlet.Servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,7 +41,7 @@ public class SolrDAMAssetServlet extends SlingSafeMethodsServlet {
     private static final String METADATA_VALUES_TO_BE_INDEXED = "indexed.values";
 
     @Property(name = METADATA_VALUES_TO_BE_INDEXED, label = "Metadata Indexed values", description = "Enter the fields to be indexed for DAM assets",
-            value = {"title=dc:title", "description=dc:description", "format=dc:format"}, propertyPrivate = false, cardinality = Integer.MAX_VALUE)
+            value = {"title=dc:title", "description=dc:description", "format=dc:format","damTags=cq:tags"}, propertyPrivate = false, cardinality = Integer.MAX_VALUE)
     private String INDEX_VALUES;
     private String[] indexedVal;
 
@@ -118,6 +115,8 @@ public class SolrDAMAssetServlet extends SlingSafeMethodsServlet {
                 for(Object value:arr){
                     log.info("Value is"+value);
                     if (value!=null){
+                        value= StringEscapeUtils.escapeXml(value.toString());
+                        log.info("value after escaping character is"+value);
                         xmlData=xmlData.append("<field name=\"").append(type)
                                 .append("\">").append(value.toString()).append("</field>\n");
                     }
@@ -127,6 +126,8 @@ public class SolrDAMAssetServlet extends SlingSafeMethodsServlet {
                 String value= (String)assetMetadata.get(fieldMap.get(type));
                 log.info("Value is"+value);
                 if (value!=null){
+                    value= StringEscapeUtils.escapeXml(value.toString());;
+                    log.info("value after escaping character is"+value);
                     xmlData=xmlData.append("<field name=\"").append(type)
                             .append("\">").append(value).append("</field>\n");
                 }

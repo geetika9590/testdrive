@@ -106,6 +106,11 @@ public class SolrSearch extends SlingSafeMethodsServlet {
             out.print(jsonList);
         } catch (Exception e) {
             log.info("Error during quering Data =" + e);
+        } finally {
+            if (resourceResolver != null) {
+                resourceResolver.close();
+            }
+            log.info("Exiting finally from Solr Search");
         }
 
     }
@@ -113,7 +118,6 @@ public class SolrSearch extends SlingSafeMethodsServlet {
     private JSONObject getSolrResponseAsJson(String url, String maxRows, String core, String query,String[] facetFields) throws Exception {
 
         JSONObject jsonList;
-        try {
 
             HttpSolrServer solr = new HttpSolrServer(url);
             SolrQuery solrQuery = new SolrQuery();
@@ -136,11 +140,6 @@ public class SolrSearch extends SlingSafeMethodsServlet {
             log.info("=====Response received from Solr is {}", qp);
             jsonList = parseResponse(qp);
             log.info("=====JSONObject received after parsing document is {}", jsonList);
-        } finally {
-            if (resourceResolver != null) {
-                resourceResolver.close();
-            }
-        }
         return jsonList;
     }
 

@@ -1,10 +1,24 @@
 package com.ig.testdrive.commons.util;
 
 public class CommonMethods {
+
+    public static final String[] SPECIAL_CHARS={"@", "<","&","=","+","|","!","{","}","(",")","^","~",">"};
+
     public static String parseHtmlToText(String html) {
         html = html.replaceAll("\\<.*?\\>", "").replaceAll("&nbsp;", "");
         html = html.replaceAll("\n", "").replaceAll("\r", "");
         return html;
+    }
+
+    public static String removeSpecialChars(String source){
+        System.out.println("String to be modified is"+source);
+        for(String s:SPECIAL_CHARS){
+            if (source.contains(s)){
+                source=source.replaceAll(s," ");
+            }
+        }
+        System.out.println("String after modification is"+source);
+        return source;
     }
 
     public static String checkNull(String text){
