@@ -1,4 +1,5 @@
-@Version("1.0.0")
+/**
+ *  This is the base package for this project.
+ */
 package com.ig.testdrive;
 
-import aQute.bnd.annotation.Version;

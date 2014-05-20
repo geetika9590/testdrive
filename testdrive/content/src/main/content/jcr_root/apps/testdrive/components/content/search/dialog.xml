@@ -21,6 +21,20 @@
                         fieldLabel="Max No. of Results to be fetched"
                         name="./maxRows"
                         xtype="textfield"/>
+                    <QueryField
+                        jcr:primaryType="cq:Widget"
+                        fieldDescription="[Select the solr fields which needs to be returned as part of Search. Press + to add these fields.]"
+                        fieldLabel="Enter the Query Fields."
+                        name="./queryFields"
+                        width="[100]"
+                        xtype="[multifield]">
+                        <fieldConfig
+                            jcr:primaryType="nt:unstructured"
+                            allowBlank="false"
+                            options="/bin/service/parameters.json"
+                            type="select"
+                            xtype="selection"/>
+                    </QueryField>
                     <EnableFacet
                         jcr:primaryType="cq:Widget"
                         fieldLabel="Enable Faceting"
@@ -41,8 +55,10 @@
                         xtype="[multifield]">
                         <fieldConfig
                             jcr:primaryType="nt:unstructured"
-                            xtype="textfield"
-                            allowBlank="false"/>
+                            allowBlank="false"
+                            options="/bin/service/parameters.json"
+                            type="select"
+                            xtype="selection"/>
                     </FacetFields>
                 </items>
             </tab1>

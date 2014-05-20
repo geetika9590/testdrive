@@ -7,7 +7,9 @@
     String maxRows=properties.get("maxRows","10");
     String isFacet=properties.get("isFacet","false");
     String[] facetFields=properties.get("facetFields",String[].class);
+    String[] searchFields=properties.get("queryFields",String[].class);
     String fields="";
+    String queryFieldsString="";
     if(Integer.parseInt(maxRows)<0){
         maxRows="10";
     }
@@ -17,6 +19,11 @@
     if (facetFields!=null){
         for (String s:facetFields){
             fields+=s+",";
+        }
+    }
+    if (searchFields!=null){
+        for (String str:searchFields){
+            queryFieldsString+=str+",";
         }
     }
 %>
@@ -35,7 +42,7 @@
 
         function filterMe(parentValue,key){
             var queryParam=parentValue+":\""+key+"\"";
-            var queryString ="query="+queryParam+"&core="+f1.core.value+"&maxRows="+f1.maxRows.value;
+            var queryString ="query="+queryParam+"&core="+f1.core.value+"&maxRows="+f1.maxRows.value+"&queryFields="+f1.queryFields.value;
             if(f1.isFacet.value=="true"){
                 queryString=queryString+"&isFacet="+f1.isFacet.value+"&facetFields="+f1.facetFields.value;
             }
@@ -65,22 +72,22 @@
                             "<th width='100%' style=\"text-align:left\">Facets</th>"+
                             "</tr>";
                     $.each(facet,function(parentKey,parentValue){
-                            facetedText+="<tr>"+
-                                    "<td><ul><li>"+parentKey;
-                            $.each(parentValue,function(key,value){
-                                var funt="filterMe('"+parentKey+"','"+key+"')";
-                                if(parentKey.lastIndexOf("Tags")!=-1){
-                                    $.each(value,function(k,v){
-                                        facetedText+="<ul><li><a href=\"javascript:"+funt+"\">"+k+"("+v+")"+"</a></li></ul>";
-                                    });
+                        facetedText+="<tr>"+
+                                "<td><ul><li>"+parentKey;
+                        $.each(parentValue,function(key,value){
+                            var funt="filterMe('"+parentKey+"','"+key+"')";
+                            if(parentKey.lastIndexOf("Tags")!=-1){
+                                $.each(value,function(k,v){
+                                    facetedText+="<ul><li><a href=\"javascript:"+funt+"\">"+k+"("+v+")"+"</a></li></ul>";
+                                });
 
-                                }
-                                else{
+                            }
+                            else{
 
-                                    facetedText+="<ul><li><a href=\"javascript:"+funt+"\">"+key+"("+value+")"+"</a></li></ul>";
-                                }
-                            });
-                            facetedText+="</li></ul></td></tr>";
+                                facetedText+="<ul><li><a href=\"javascript:"+funt+"\">"+key+"("+value+")"+"</a></li></ul>";
+                            }
+                        });
+                        facetedText+="</li></ul></td></tr>";
                     });
 
                     facetedText+="</table>";
@@ -93,9 +100,9 @@
             if(f1.query.value==""){
                 return false;
             }
-            queryString ="query="+f1.query.value+"&core="+f1.core.value+"&maxRows="+f1.maxRows.value;
+            queryString ="query="+f1.query.value+"&core="+f1.core.value+"&maxRows="+f1.maxRows.value+"&queryFields="+f1.queryFields.value;
             if(f1.isFacet.value=="true"){
-               queryString=queryString+"&isFacet="+f1.isFacet.value+"&facetFields="+f1.facetFields.value;
+                queryString=queryString+"&isFacet="+f1.isFacet.value+"&facetFields="+f1.facetFields.value;
             }
             url="/bin/service/solrsearch.html?"+queryString;
             $.getJSON( url, function( data ) {
@@ -123,22 +130,22 @@
                             "</tr>";
                     $.each(facet,function(parentKey,parentValue){
 
-                            facetedText+="<tr>"+
-                                    "<td><ul><li>"+parentKey;
-                            $.each(parentValue,function(key,value){
-                                var funt="filterMe('"+parentKey+"','"+key+"')";
-                                if(parentKey.lastIndexOf("Tags")!=-1){
-                                    $.each(value,function(k,v){
-                                        facetedText+="<ul><li><a href=\"javascript:"+funt+"\">"+k+"("+v+")"+"</a></li></ul>";
-                                    });
+                        facetedText+="<tr>"+
+                                "<td><ul><li>"+parentKey;
+                        $.each(parentValue,function(key,value){
+                            var funt="filterMe('"+parentKey+"','"+key+"')";
+                            if(parentKey.lastIndexOf("Tags")!=-1){
+                                $.each(value,function(k,v){
+                                    facetedText+="<ul><li><a href=\"javascript:"+funt+"\">"+k+"("+v+")"+"</a></li></ul>";
+                                });
 
-                                }
-                                else{
+                            }
+                            else{
 
-                                    facetedText+="<ul><li><a href=\"javascript:"+funt+"\">"+key+"("+value+")"+"</a></li></ul>";
-                                }
-                            });
-                            facetedText+="</li></ul></td></tr>";
+                                facetedText+="<ul><li><a href=\"javascript:"+funt+"\">"+key+"("+value+")"+"</a></li></ul>";
+                            }
+                        });
+                        facetedText+="</li></ul></td></tr>";
                     });
 
                     facetedText+="</table>";
@@ -152,11 +159,12 @@
 <body>
 
 
-<form name="f1">
+<form name="f1" >
     <input type="text" name="query" value="" />
-    <input type="button" value="Submit" onclick="submitMe(<%=isFacet%>)"/>
+    <input type="button" value="Submit" onclick="submitMe()"/>
     <input type="hidden" name="core" value="<%=core%>" />
     <input type="hidden" name="maxRows" value="<%=maxRows%>" />
+    <input type="hidden" name="queryFields" value="<%=queryFieldsString%>" />
     <input type="hidden" name="facetFields" value="<%=fields%>" />
     <input type="hidden" name="isFacet" value="<%=isFacet%>" />
 </form>

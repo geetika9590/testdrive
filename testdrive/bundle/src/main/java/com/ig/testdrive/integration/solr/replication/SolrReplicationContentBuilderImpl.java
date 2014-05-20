@@ -6,26 +6,30 @@ import com.day.cq.wcm.api.Page;
 import com.ig.testdrive.integration.solr.service.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.*;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ResourceResolverFactory;
-import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.resource.*;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Session;
+import javax.servlet.ServletException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component(immediate = true, enabled = true, metatype = true)
+/**
+ * Created with IntelliJ IDEA.
+ * User: Geetika
+ * Date: 19/5/14
+ * Time: 10:32 AM
+ */
+@Component(label = "Solr Replication Content Builder", description = "This servlet replicates data to solr",immediate = true, enabled = true, metatype = true)
 @Service(ContentBuilder.class)
 @Property(name = "name", value = "SolrReplication", propertyPrivate = true)
-
 public class SolrReplicationContentBuilderImpl implements ContentBuilder {
 
     public static final String name = "SolrReplication";
@@ -40,7 +44,7 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
     private static final Logger log = LoggerFactory.getLogger(SolrReplicationContentBuilderImpl.class);
 
     @Reference
-    CQOperationsForSolrSearch cqOperationsForSolrSearch;
+    CQOperationsForSolrReplication cqOperationsForSolrReplication;
 
     @Reference
     ResourceResolverFactory resourceResolverFactory;
@@ -80,11 +84,14 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
         String resourcePath = action.getPath();
         String resType = "";
         try {
-            resourceResolver = resourceResolverFactory.getAdministrativeResourceResolver(null);
+            HashMap map=new HashMap();
+            map.put( "user.jcr.session", session);
+            resourceResolver=resourceResolverFactory.getResourceResolver(map);
+            log.debug("resource resolver got is"+resourceResolver   );
             Resource resource = resourceResolver.resolve(resourcePath);
             ValueMap properties = resource.adaptTo(ValueMap.class);
             String primaryType = (String) properties.get("jcr:primaryType");
-            log.info("Primary type is {}", primaryType);
+            log.debug("Primary type is {}", primaryType);
             Page page = null;
             Asset asset = null;
             if (primaryType.equalsIgnoreCase("cq:Page")) {
@@ -98,31 +105,26 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
                 return modificationEvents(resourceResolver, resourcePath, solrUri, action.getType(), factory, resType);
             } else
                 return moveEvent(resourcePath, solrUri, action.getType(), factory);
-        } catch (Exception e) {
-            log.info("cause of error =>" + e.getMessage());
-        } finally {
+        } catch (LoginException e) {
+            log.error("Exception occured while getting the resource resolver ");
+            e.printStackTrace();
+        } catch (ServletException e) {
+            log.error("Servlet exception occured");
+            e.printStackTrace();
+        } catch (IOException e) {
+            log.error("Exception occured while doing I/O operations");
+            e.printStackTrace();
+        }  finally {
             if (resourceResolver != null)
                 resourceResolver.close();
+            log.debug("finally executed successfully");
         }
 
         return blankData(factory);
     }
 
 
-    private Page getSpecificPage(ResourceResolver resourceResolver, String pageUri) {
-
-        Resource resource = resourceResolver.resolve(pageUri);
-        return resource.adaptTo(Page.class);
-    }
-
-    private Asset getSpecificAsset(ResourceResolver resourceResolver, String assetUri) {
-
-        Resource resource = resourceResolver.resolve(assetUri);
-        return resource.adaptTo(Asset.class);
-    }
-
-
-    private ReplicationContent modificationEvents(ResourceResolver resourceResolver, String currentResUri, String solrUri, ReplicationActionType operation, ReplicationContentFactory factory, String resType) throws Exception {
+    private ReplicationContent modificationEvents(ResourceResolver resourceResolver, String currentResUri, String solrUri, ReplicationActionType operation, ReplicationContentFactory factory, String resType) throws ServletException, IOException {
 
         if (!solrUri.equals("")) {
             if (operation.equals(ReplicationActionType.ACTIVATE)) {
@@ -137,23 +139,24 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
     }
 
 
-    private ReplicationContent pageActivationEvent(ResourceResolver resourceResolver, String currentPageUri, ReplicationContentFactory factory) throws Exception {
+    private ReplicationContent pageActivationEvent(ResourceResolver resourceResolver, String currentPageUri, ReplicationContentFactory factory) throws ServletException, IOException {
 
         currentPageUri = currentPageUri + ".solrsearch.xml";
-        String xmlData = cqOperationsForSolrSearch.getXMLData(resourceResolver, currentPageUri);
+        String xmlData = cqOperationsForSolrReplication.getXMLData(resourceResolver, currentPageUri);
 
-        log.info("\n ========xml Data for page URI {} = \n {} \n", currentPageUri, xmlData);
+        log.debug("\n ========xml Data for page URI {} = \n {} \n", currentPageUri, xmlData);
         return (!xmlData.equals("")) ? create(factory, xmlData) : blankData(factory);
     }
 
-    private ReplicationContent deactivationEvent(String currentResUri, String solrUri, ReplicationContentFactory factory) throws Exception {
+    private ReplicationContent deactivationEvent(String currentResUri, String solrUri, ReplicationContentFactory factory) throws IOException {
 
-        log.info(" \n Deactivating the Page with URI = {} \n for solrUri = {}", currentResUri, solrUri);
+        log.debug(" \n Deactivating the Page with URI = {} \n for solrUri = {}", currentResUri, solrUri);
         String xmlData = "<delete><id>" + currentResUri + "</id></delete>";
+        log.debug(" \n XMLData generated for deleting the content is", xmlData);
         return create(factory, xmlData);
     }
 
-    private ReplicationContent create(ReplicationContentFactory factory, String xmlData) throws Exception {
+    private ReplicationContent create(ReplicationContentFactory factory, String xmlData) throws IOException {
 
         File tempFile = null;
         BufferedWriter out = null;
@@ -175,22 +178,23 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
     private ReplicationContent blankData(ReplicationContentFactory factory) {
         try {
             String xmlData = "<add><doc><field name=\"id\">_blank_</field></doc></add>";
-            log.info(xmlData);
+            log.debug("blank xmlData is" + xmlData);
             return create(factory, xmlData);
         } catch (Exception e) {
-            log.info("Error in Replication Handler blank data method " + e.getMessage());
+            log.debug("Error in Replication Handler blank data method ");
+            e.printStackTrace();
         }
         return ReplicationContent.VOID;
     }
 
-    private ReplicationContent moveEvent(String currentResUri, String solrUri, ReplicationActionType operation, ReplicationContentFactory factory) throws Exception {
+    private ReplicationContent moveEvent(String currentResUri, String solrUri, ReplicationActionType operation, ReplicationContentFactory factory) throws IOException {
 
         boolean flag = isPageUriStartsWithBlackListPaths(currentResUri);
         if (!flag) {
             if (solrUri.equals("")) {
-                log.info(" \n Solr User Agents doesn't Have Read Permission for {} \n ", currentResUri);
+                log.debug(" \n Solr User Agents doesn't Have Read Permission for {} \n ", currentResUri);
             } else {
-                log.info("\n Move Operation Performed on page \n");
+                log.debug("\n Move Operation Performed on page \n");
                 if (operation.equals(ReplicationActionType.DELETE))
                     return deactivationEvent(currentResUri, solrUri, factory);
             }
@@ -199,6 +203,8 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
     }
 
     private boolean isPageUriStartsWithBlackListPaths(String pageUri) {
+
+        log.debug("pageURI received is"+pageUri);
 
         boolean status = false;
         for (String blackListUrl : BLACK_LIST_URLS) {
