@@ -6,15 +6,13 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Geetika
- * Date: 19/5/14
- * Time: 10:32 AM
+ * This interface is designed as an helper interface for solr replication
  */
 public interface CQOperationsForSolrReplication {
 
     /**
-     * This method generates the XML for posting the data to Solr
+     * This method makes a request to the xmldataurl passed as
+     * a parameter and returns the response.
      * @param resourceResolver
      * @param xmlDataUrl
      * @return String
@@ -22,5 +20,5 @@ public interface CQOperationsForSolrReplication {
      * @throws IOException
      */
     String getXMLData(ResourceResolver resourceResolver, String xmlDataUrl)
-             throws ServletException, IOException;
+            throws ServletException, IOException;
 }

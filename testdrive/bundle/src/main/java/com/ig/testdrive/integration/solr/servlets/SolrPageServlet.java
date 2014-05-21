@@ -18,12 +18,11 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Geetika
- * Date: 19/5/14
- * Time: 10:32 AM
+ * This is a servlet which extracts the metadata
+ * properties for a page and components and prepares and XML,
  */
-@Component(label = "Solr Page Component servlet", description = "This servlet generates XML for CQ Pages", enabled = true, immediate = true, metatype = true)
+@Component(label = "Solr Page Component servlet", description = "This servlet generates XML for CQ Pages",
+        enabled = true, immediate = true, metatype = true)
 @Service(value = Servlet.class)
 @Properties({
         @Property(name = "service.description", value = "This servlet posts data to Solr server for DAM assets"),
@@ -35,58 +34,105 @@ import java.util.*;
 })
 public class SolrPageServlet extends SlingSafeMethodsServlet {
 
+    /**
+     * It contains the reference for a service object ResourceResolverFactory.
+     */
     @Reference
     ResourceResolverFactory resolverFactory;
 
+    /**
+     * It contains the reference for a service object SolrFieldMap.
+     */
     @Reference
     SolrFieldMap solrFieldMap;
 
-    private static final Logger log = LoggerFactory.getLogger(SolrPageServlet.class);
+    /**
+     * Log variable for this class.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SolrPageServlet.class);
 
+    /**
+     * A constant that contains the resource type for a parsys component.
+     */
     private static final String PARSYS = "foundation/components/parsys";
 
+    /**
+     * A constant that contains the resource type for a iparsys component.
+     */
     private static final String IPARSYS = "foundation/components/iparsys";
 
+    /**
+     * HashMap that contains the mapping for a page.
+     */
     private HashMap<String, String> pageFieldMap = new HashMap<String, String>();
+    /**
+     * HashMap that contains the mapping for components.
+     */
     private HashMap<String, ArrayList> compFieldMap = new HashMap<String, ArrayList>();
 
+    /**
+     * Activate method for this class.
+     *
+     * @param componentContext
+     */
     @Activate
     protected void activate(ComponentContext componentContext) {
         Dictionary properties = componentContext.getProperties();
-        log.debug("inside activate method of Page servlet");
+        LOG.debug("inside activate method of Page servlet");
 
     }
 
+    /**
+     * Modified method for this class.
+     *
+     * @param componentContext
+     */
     @Modified
     protected void modified(ComponentContext componentContext) {
-        log.debug("Values have been modified");
+        LOG.debug("Values have been modified");
         activate(componentContext);
     }
 
+    /**
+     * doGet is the method which gets called for a GET request.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         Resource resource = request.getResource();
-        log.debug("resource is " + resource);
+        LOG.debug("resource is " + resource);
         ValueMap valueMap = resource.adaptTo(ValueMap.class);
-        log.debug("page & page metadata is" + valueMap);
+        LOG.debug("page & page metadata is" + valueMap);
         ResourceResolver resourceResolver = null;
         try {
             resourceResolver = request.getResourceResolver();
             if (resource != null && !ResourceUtil.isNonExistingResource(resource)) {
-                pageFieldMap=solrFieldMap.getPageFieldMap();
-                compFieldMap=solrFieldMap.getCompFieldMap();
-                log.debug("Solr field names and values for page are " + pageFieldMap);
-                log.debug("Solr field names and values for components are " + compFieldMap);
+                pageFieldMap = solrFieldMap.getPageFieldMap();
+                compFieldMap = solrFieldMap.getCompFieldMap();
+                LOG.debug("Solr field names and values for page are " + pageFieldMap);
+                LOG.debug("Solr field names and values for components are " + compFieldMap);
                 String xmlString = getXMLData(resourceResolver, resource, pageFieldMap, compFieldMap);
                 response.getOutputStream().write(xmlString.getBytes());
             }
         } finally {
-            log.debug("finally executed");
+            LOG.debug("finally executed");
             if (resourceResolver != null)
                 resourceResolver.close();
         }
     }
 
+    /**
+     * A wrapper method which parses the properties and returns the generated xml.
+     *
+     * @param resourceResolver
+     * @param resource
+     * @param pagefieldMap
+     * @param compFieldMap
+     * @return xmlData.
+     */
     private String getXMLData(ResourceResolver resourceResolver, Resource resource, HashMap pagefieldMap, HashMap compFieldMap) {
 
         String tempUrl = "";
@@ -101,15 +147,24 @@ public class SolrPageServlet extends SlingSafeMethodsServlet {
             pageValueAap = tempResource.adaptTo(ValueMap.class);
             xmlData = CommonMethods.parseFieldMap(pageValueAap, pagefieldMap, xmlData);
 
-            log.debug("xmldata for page so far is" + xmlData);
+            LOG.debug("xmldata for page so far is" + xmlData);
             xmlData = getXMLDataForComp(xmlData, compFieldMap, tempResource, resourceResolver);
         }
         xmlData.append("</doc>\n").append("</add>");
-        log.debug("Xml generated is" + xmlData);
+        LOG.debug("Xml generated is" + xmlData);
         return xmlData.toString();
     }
 
-
+    /**
+     * This method parses the properties for components
+     * and returns the generated xml.
+     *
+     * @param xmlData
+     * @param compFieldMap
+     * @param tempResource
+     * @param resourceResolver
+     * @return xmlData.
+     */
     private StringBuffer getXMLDataForComp(StringBuffer xmlData, HashMap compFieldMap, Resource tempResource, ResourceResolver resourceResolver) {
         Iterator<Resource> compResourceIterator = tempResource.listChildren();
         Set keys = compFieldMap.keySet();
@@ -141,32 +196,42 @@ public class SolrPageServlet extends SlingSafeMethodsServlet {
                 }
             }
         }
-        log.debug("Returning from getXmlDataForcomp "+ xmlData);
+        LOG.debug("Returning from getXmlDataForcomp " + xmlData);
         return xmlData;
     }
 
+    /**
+     * It parses the map on for a resource type and returns the xml
+     *
+     * @param resource
+     * @param compFieldMap
+     * @param xmlData
+     * @param resourceType
+     * @param resourceResolver
+     * @return xmlData.
+     */
     private StringBuffer getXMLDataForResourceType(Resource resource, HashMap compFieldMap, StringBuffer xmlData, String resourceType, ResourceResolver resourceResolver) {
 
 
         ValueMap compValueMap = resource.adaptTo(ValueMap.class);
-        log.debug("Component value map " + compValueMap);
-        ArrayList fieldsInfo = (ArrayList)compFieldMap.get(resourceType);
+        LOG.debug("Component value map " + compValueMap);
+        ArrayList fieldsInfo = (ArrayList) compFieldMap.get(resourceType);
 
-        Iterator iterator=fieldsInfo.iterator();
-        while (iterator.hasNext()){
+        Iterator iterator = fieldsInfo.iterator();
+        while (iterator.hasNext()) {
             SolrFieldMappingBean solrFieldMappingBean = (SolrFieldMappingBean) iterator.next();
             if (solrFieldMappingBean.isReference()) {
-                String referenceResourceType = (String)compValueMap.get(solrFieldMappingBean.getReferenceField());
-                log.debug("Reference paragraph component is referring to " + referenceResourceType);
+                String referenceResourceType = (String) compValueMap.get(solrFieldMappingBean.getReferenceField());
+                LOG.debug("Reference paragraph component is referring to " + referenceResourceType);
                 Resource referenceResource = resourceResolver.getResource(referenceResourceType);
                 compValueMap = referenceResource.adaptTo(ValueMap.class);
                 fieldsInfo = (ArrayList) compFieldMap.get(referenceResource.getResourceType());
-                log.debug("reference resource value map is " + compValueMap);
+                LOG.debug("reference resource value map is " + compValueMap);
             }
-            log.debug("Field map" + fieldsInfo);
+            LOG.debug("Field map" + fieldsInfo);
             xmlData = CommonMethods.parseFieldBean(compValueMap, fieldsInfo, xmlData);
         }
-        log.debug("Returning from getXMLDataForResourceType" + xmlData);
+        LOG.debug("Returning from getXMLDataForResourceType" + xmlData);
         return xmlData;
 
     }

@@ -15,21 +15,14 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Dictionary;
 import java.util.HashMap;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Geetika
- * Date: 19/5/14
- * Time: 10:32 AM
- */
 
-@Component(label = "Solr DAM Asset servlet", description = "This servlet generates for DAM assets", enabled = true, immediate = true, metatype = true)
-@Service(Servlet.class)
+@Component(label = "Solr DAM Asset servlet", description = "This servlet generates for DAM assets",
+        enabled = true, immediate = true, metatype = true)
 @Properties({
         @Property(name = "service.description", value = "This servlet posts data to Solr server for DAM assets"),
         @Property(name = "service.vendor", value = "Intelligrape"),
@@ -38,60 +31,93 @@ import java.util.HashMap;
         @Property(name = "sling.servlet.selectors", value = "solrsearch", propertyPrivate = true),
         @Property(name = "sling.servlet.methods", value = "GET", propertyPrivate = true)
 })
+/**
+ * This is a servlet which extracts the metadata
+ * properties for an asset and prepares and XML,
+ */
 public class SolrDAMAssetServlet extends SlingSafeMethodsServlet {
 
+    /**
+     * It contains the reference for a service object SolrFieldMap.
+     */
     @Reference
     SolrFieldMap solrFieldMap;
 
-    private static final Logger log = LoggerFactory.getLogger(SolrDAMAssetServlet.class);
+    /**
+     * Log variable for this class.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SolrDAMAssetServlet.class);
 
+    /**
+     * Map which holds the mappings for CQ and solr fields for an asset.
+     */
     private HashMap<String, String> map = new HashMap<String, String>();
 
+    /**
+     * Activate method for this component.
+     * @param componentContext
+     */
     @Activate
     protected void activate(ComponentContext componentContext) {
         Dictionary properties = componentContext.getProperties();
-        log.debug("inside activate method of DAM servlet");
+        LOG.debug("inside activate method of DAM servlet");
     }
 
+    /**
+     * Modified method for this component.
+     * @param componentContext
+     */
     @Modified
     protected void modified(ComponentContext componentContext) {
-        log.debug("Values have been modified");
+        LOG.debug("Values have been modified");
         activate(componentContext);
     }
 
+    /**
+     * doGet is the method which gets called for a GET request.
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
         Resource resource = request.getResource();
-        log.debug("resource is " + resource);
+        LOG.debug("resource is " + resource);
         Asset asset = resource.adaptTo(Asset.class);
-        log.debug("asset & asset metadata is" + asset + " " + asset.getMetadata());
+        LOG.debug("asset & asset metadata is" + asset + " " + asset.getMetadata());
         ResourceResolver resourceResolver = null;
         try {
             resourceResolver = request.getResourceResolver();
             if (resource != null && !ResourceUtil.isNonExistingResource(resource)) {
-                log.debug("inside if");
-                map=solrFieldMap.getAssetFieldMap();
-                log.debug("Solr field names and values are " + map);
-                String xmlString=getXMLData(asset,map);
+                LOG.debug("inside if");
+                map = solrFieldMap.getAssetFieldMap();
+                LOG.debug("Solr field names and values are " + map);
+                String xmlString = getXMLData(asset, map);
                 response.getOutputStream().write(xmlString.getBytes());
             }
-        }finally {
-            log.debug("finally executed");
+        } finally {
+            LOG.debug("finally executed");
             if (resourceResolver != null)
                 resourceResolver.close();
         }
     }
 
+    /**
+     * It extracts the metadata properties for  an asset.
+     * @param asset
+     * @param fieldMap
+     * @return
+     */
     private String getXMLData(Asset asset, HashMap fieldMap) {
         HashMap assetMetadata = (HashMap) asset.getMetadata();
         StringBuffer xmlData = new StringBuffer("<add>\n" +
                 "<doc>\n" + "<field name=\"id\">" + asset.getPath() +
-                "</field>\n"+"<field name=\"type\">asset</field>\n");
-        log.debug("xmlData so far is"+xmlData);
-        xmlData=CommonMethods.parseFieldMap((ValueMap)assetMetadata,fieldMap,xmlData);
+                "</field>\n" + "<field name=\"type\">asset</field>\n");
+        LOG.debug("xmlData so far is" + xmlData);
+        xmlData = CommonMethods.parseFieldMap((ValueMap) assetMetadata, fieldMap, xmlData);
         xmlData.append("</doc>\n").append("</add>");
-        log.debug("Xml generated is" + xmlData);
+        LOG.debug("Xml generated is" + xmlData);
         return xmlData.toString();
     }
 }

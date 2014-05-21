@@ -20,10 +20,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Geetika
- * Date: 19/5/14
- * Time: 10:32 AM
+ * This is a servlet which is used for parameter extraction of solr fields.
  */
 @Component(label = "Solr Parameter Extraction servlet", description = "This servlet extracts the solr fields which are searchable ", enabled = true, immediate = true, metatype = true)
 @Service(value = Servlet.class)
@@ -35,24 +32,49 @@ import java.util.*;
 })
 public class SolrParametersServlet extends SlingSafeMethodsServlet {
 
+    /**
+     * It holds the reference of SolrFieldMap service.
+     */
     @Reference
     SolrFieldMap solrFieldMap;
 
-    private static final Logger log = LoggerFactory.getLogger(SolrParametersServlet.class);
+    /**
+     * Log variable for this class.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SolrParametersServlet.class);
+    /**
+     * It contains the property set for solrFields.
+     */
     private HashSet<String> propertySet = new HashSet<String>();
 
+    /**
+     * Activate method for this component.
+     *
+     * @param componentContext
+     */
     @Activate
     protected void activate(ComponentContext componentContext) {
-        log.debug("inside activate method of parameters servlet");
+        LOG.debug("inside activate method of parameters servlet");
     }
 
+    /**
+     * Modified method for this component.
+     *
+     * @param componentContext
+     */
     @Modified
     protected void modified(ComponentContext componentContext) {
-        log.debug("Values have been modified");
+        LOG.debug("Values have been modified");
         activate(componentContext);
     }
 
-
+    /**
+     * doGet() method is called for and HTTP GET request.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
@@ -70,24 +92,29 @@ public class SolrParametersServlet extends SlingSafeMethodsServlet {
                 String field = iterator.next().toString();
                 jsonObject.put("text", field);
                 jsonObject.put("value", field);
-                log.debug("json obj is" + jsonObject);
+                LOG.debug("json obj is" + jsonObject);
                 jsonArray.put(jsonObject);
             }
-            log.debug("Solr field set is " + propertySet);
+            LOG.debug("Solr field set is " + propertySet);
             if (jsonArray.length() > 0) {
                 out.print(jsonArray);
             } else {
                 out.print("[]");
             }
         } catch (JSONException e) {
-            log.error("Exception occured while updating Json object " + e.getMessage());
+            LOG.error("Exception occured while updating Json object " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    /**
+     * This method parses the fieldmaps and updates the propertySet.
+     *
+     * @param maps
+     */
     public void addFields(HashMap[] maps) {
         for (HashMap map : maps) {
-            log.debug("map received is" + map);
+            LOG.debug("map received is" + map);
             Set set = map.keySet();
             Iterator iterator = set.iterator();
             while (iterator.hasNext()) {
