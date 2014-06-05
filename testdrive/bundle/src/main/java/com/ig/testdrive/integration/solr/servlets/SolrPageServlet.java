@@ -229,7 +229,7 @@ public class SolrPageServlet extends SlingSafeMethodsServlet {
                 LOG.debug("reference resource value map is " + compValueMap);
             }
             LOG.debug("Field map" + fieldsInfo);
-            xmlData = CommonMethods.parseFieldBean(compValueMap, fieldsInfo, xmlData);
+            xmlData = CommonMethods.parseFieldMap(compValueMap, fieldsInfo, xmlData);
         }
         LOG.debug("Returning from getXMLDataForResourceType" + xmlData);
         return xmlData;

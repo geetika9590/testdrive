@@ -141,6 +141,7 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
             resourceResolver = resourceResolverFactory.getResourceResolver(map);
             LOG.debug("resource resolver got is" + resourceResolver);
             Resource resource = resourceResolver.resolve(resourcePath);
+            LOG.debug("resource path is"+resource +" path is"+resourcePath);
             ValueMap properties = resource.adaptTo(ValueMap.class);
             String primaryType = (String) properties.get("jcr:primaryType");
             LOG.debug("Primary type is {}", primaryType);
@@ -206,18 +207,18 @@ public class SolrReplicationContentBuilderImpl implements ContentBuilder {
      * It caters for any activation events on content.
      *
      * @param resourceResolver
-     * @param currentPageUri
+     * @param currentUri
      * @param factory
      * @return
      * @throws ServletException
      * @throws IOException
      */
-    private ReplicationContent pageActivationEvent(ResourceResolver resourceResolver, String currentPageUri, ReplicationContentFactory factory) throws ServletException, IOException {
+    private ReplicationContent pageActivationEvent(ResourceResolver resourceResolver, String currentUri, ReplicationContentFactory factory) throws ServletException, IOException {
 
-        currentPageUri = currentPageUri + ".solrsearch.xml";
-        String xmlData = cqOperationsForSolrReplication.getXMLData(resourceResolver, currentPageUri);
+        currentUri = currentUri + ".solrsearch.xml";
+        String xmlData = cqOperationsForSolrReplication.getXMLData(resourceResolver, currentUri);
 
-        LOG.debug("\n ========xml Data for page URI {} = \n {} \n", currentPageUri, xmlData);
+        LOG.debug("\n ========xml Data for URI {} = \n {} \n", currentUri, xmlData);
         return (!xmlData.equals("")) ? create(factory, xmlData) : blankData(factory);
     }
 

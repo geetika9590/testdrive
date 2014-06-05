@@ -43,7 +43,7 @@ public class SolrFieldMapImpl implements SolrFieldMap {
      * configuring the properties for a page that can be indexed.
      */
     @Property(name = PAGE_METADATA_VALUES_TO_BE_INDEXED, label = "Page Indexed values", description = "Enter the solr and property mapping for pages",
-            value = {"title=jcr:title", "description=jcr:description", "pageTags=cq:tags"}, propertyPrivate = false, cardinality = Integer.MAX_VALUE)
+            value = {"titleText=jcr:title", "description=jcr:description", "pageTags=cq:tags"}, propertyPrivate = false, cardinality = Integer.MAX_VALUE)
     private String PAGE_INDEX_VALUES;
 
     /**
@@ -61,7 +61,7 @@ public class SolrFieldMapImpl implements SolrFieldMap {
      * configuring the properties for an asset that can be indexed.
      */
     @Property(name = ASSET_METADATA_VALUES_TO_BE_INDEXED, label = "DAM Asset Metadata Indexed values",
-            description = "Enter the fields to be indexed for DAM assets", value = {"title=dc:title", "description=dc:description",
+            description = "Enter the fields to be indexed for DAM assets", value = {"titleText=dc:title", "description=dc:description",
             "format=dc:format", "damTags=cq:tags"}, propertyPrivate = false, cardinality = Integer.MAX_VALUE)
     private String INDEX_VALUES;
 

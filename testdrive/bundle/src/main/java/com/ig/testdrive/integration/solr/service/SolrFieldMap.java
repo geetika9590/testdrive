@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This interface declares the methods for fetching the field mappings.
+ * This interface declares the methods for fetching the field mappings  .
  */
 public interface SolrFieldMap {
     /**

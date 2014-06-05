@@ -80,7 +80,7 @@ public class SolrParametersServlet extends SlingSafeMethodsServlet {
         PrintWriter out = response.getWriter();
         HashMap[] maps = {solrFieldMap.getPageFieldMap(), solrFieldMap.getCompFieldMap(), solrFieldMap.getAssetFieldMap()};
         addFields(maps);
-        Iterator iterator = this.propertySet.iterator();
+        Iterator iterator = propertySet.iterator();
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         try {
@@ -89,11 +89,16 @@ public class SolrParametersServlet extends SlingSafeMethodsServlet {
             jsonArray.put(jsonObject);
             while (iterator.hasNext()) {
                 jsonObject = new JSONObject();
-                String field = iterator.next().toString();
-                jsonObject.put("text", field);
-                jsonObject.put("value", field);
-                LOG.debug("json obj is" + jsonObject);
-                jsonArray.put(jsonObject);
+                Object obj=iterator.next();
+                if (obj!=null)      {
+                    String field = obj.toString();
+                    if(!field.equalsIgnoreCase("text_data"))  {
+                        jsonObject.put("text", field);
+                        jsonObject.put("value", field);
+                        LOG.debug("json obj is" + jsonObject);
+                        jsonArray.put(jsonObject);
+                    }
+                }
             }
             LOG.debug("Solr field set is " + propertySet);
             if (jsonArray.length() > 0) {

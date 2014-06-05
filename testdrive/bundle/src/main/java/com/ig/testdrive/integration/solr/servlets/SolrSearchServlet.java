@@ -30,7 +30,7 @@ import java.util.*;
  * This is the search servlet which prepares the solr query,
  * hits the solr server and fetches the response.
  */
-@Component(label = "Solr search servlet", description = "This servlet queries the Solr Server",
+@Component(label = "Solr Search Servlet", description = "This servlet queries the Solr Server",
         enabled = true, immediate = true, metatype = true)
 @Service(Servlet.class)
 @Properties({
@@ -190,6 +190,7 @@ public class SolrSearchServlet extends SlingSafeMethodsServlet {
         solrQuery.setRows(Integer.parseInt(maxRows));
         LOG.debug("Solr query is" + solrQuery);
         QueryResponse qp = solr.query(solrQuery);
+        LOG.debug("time taken for query is"+qp.getElapsedTime()) ;
         LOG.debug("=====Response received from Solr is {}", qp);
         jsonList = parseResponse(qp);
         LOG.debug("=====JSONObject received after parsing document is {}", jsonList);
@@ -233,6 +234,7 @@ public class SolrSearchServlet extends SlingSafeMethodsServlet {
         }
         LOG.debug("JSON Doc object is" + jsonDocArray);
         jsonResponse.put("solrDocs", jsonDocArray);
+        jsonResponse.put("solrResponseTime",qp.getQTime());
         if (isFacet) {
             jsonResponse.put("solrFacets", parseFacetFields(qp.getFacetFields()));
         }

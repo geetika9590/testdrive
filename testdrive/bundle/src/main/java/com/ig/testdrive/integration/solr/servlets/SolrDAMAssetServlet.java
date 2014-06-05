@@ -15,14 +15,15 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.Servlet;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Map;
 
 
 @Component(label = "Solr DAM Asset servlet", description = "This servlet generates for DAM assets",
         enabled = true, immediate = true, metatype = true)
+@Service(value = Servlet.class)
 @Properties({
         @Property(name = "service.description", value = "This servlet posts data to Solr server for DAM assets"),
         @Property(name = "service.vendor", value = "Intelligrape"),
@@ -59,7 +60,6 @@ public class SolrDAMAssetServlet extends SlingSafeMethodsServlet {
      */
     @Activate
     protected void activate(ComponentContext componentContext) {
-        Dictionary properties = componentContext.getProperties();
         LOG.debug("inside activate method of DAM servlet");
     }
 
@@ -81,7 +81,6 @@ public class SolrDAMAssetServlet extends SlingSafeMethodsServlet {
      */
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
-        PrintWriter out = response.getWriter();
         Resource resource = request.getResource();
         LOG.debug("resource is " + resource);
         Asset asset = resource.adaptTo(Asset.class);
@@ -110,12 +109,12 @@ public class SolrDAMAssetServlet extends SlingSafeMethodsServlet {
      * @return
      */
     private String getXMLData(Asset asset, HashMap fieldMap) {
-        HashMap assetMetadata = (HashMap) asset.getMetadata();
+        HashMap assetMetadata = (HashMap)asset.getMetadata();
         StringBuffer xmlData = new StringBuffer("<add>\n" +
                 "<doc>\n" + "<field name=\"id\">" + asset.getPath() +
                 "</field>\n" + "<field name=\"type\">asset</field>\n");
         LOG.debug("xmlData so far is" + xmlData);
-        xmlData = CommonMethods.parseFieldMap((ValueMap) assetMetadata, fieldMap, xmlData);
+        xmlData = CommonMethods.parseFieldMap(assetMetadata, fieldMap, xmlData);
         xmlData.append("</doc>\n").append("</add>");
         LOG.debug("Xml generated is" + xmlData);
         return xmlData.toString();

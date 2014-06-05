@@ -18,10 +18,10 @@ import java.util.Set;
  */
 public class CommonMethods {
 
-    private static final Logger log = LoggerFactory.getLogger(CommonMethods.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CommonMethods.class);
 
     /**
-     * This method parse the field map and updates the xmlfor pushing data to solr.
+     * This method parse the field map for CQ pages and updates the xmlfor pushing data to solr.
      * @param valueMap
      * @param fieldMap
      * @param xmlData
@@ -38,7 +38,7 @@ public class CommonMethods {
                 for (Object value : arr) {
                     if (value != null) {
                         value = StringEscapeUtils.escapeXml(value.toString());
-                        log.debug("value after escaping character is" + value);
+                        LOG.debug("value after escaping character is" + value);
                         xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
                     }
                 }
@@ -46,8 +46,7 @@ public class CommonMethods {
                 String value = String.valueOf(valueMap.get(propName));
                 if (value != null && !value.equalsIgnoreCase("null")) {
                     value = StringEscapeUtils.escapeXml(value.toString());
-                    log.debug("value after escaping character is" + value);
-                    ;
+                    LOG.debug("value after escaping character is" + value);
                     xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
                 }
             }
@@ -57,24 +56,61 @@ public class CommonMethods {
     }
 
     /**
+     * This method parse the field map for DAM Assets and updates the xml for pushing data to solr.
+     * @param assetMetadata
+     * @param fieldMap
+     * @param xmlData
+     * @return It returns the updated xml.
+     */
+    public static StringBuffer parseFieldMap(HashMap assetMetadata, HashMap fieldMap, StringBuffer xmlData) {
+        Set keys = fieldMap.keySet();
+        Iterator iterator = keys.iterator();
+        while (iterator.hasNext()) {
+            String propName = iterator.next().toString();
+            String type = fieldMap.get(propName).toString();
+            if (assetMetadata.get(propName) instanceof Object[]) {
+                Object[] arr = (Object[]) assetMetadata.get(propName);
+                for (Object value : arr) {
+                    if (value != null) {
+                        value = StringEscapeUtils.escapeXml(value.toString());
+                        LOG.debug("value after escaping character is" + value);
+                        xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
+                    }
+                }
+            } else {
+                String value = String.valueOf(assetMetadata.get(propName));
+                if (value != null && !value.equalsIgnoreCase("null")) {
+                    value = StringEscapeUtils.escapeXml(value.toString());
+                    LOG.debug("value after escaping character is" + value);
+                    xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
+                }
+            }
+        }
+        return xmlData;
+
+    }
+
+
+
+    /**
      * This method parse the field list and updates the xmlfor pushing data to solr.
      * @param valueMap
      * @param fieldList
      * @param xmlData
      * @return It returns the updated xml.
      */
-    public static StringBuffer parseFieldBean(ValueMap valueMap, ArrayList fieldList, StringBuffer xmlData) {
-        log.info("list is" + fieldList);
+    public static StringBuffer parseFieldMap(ValueMap valueMap, ArrayList fieldList, StringBuffer xmlData) {
+        LOG.debug("list is" + fieldList);
         Iterator iterator = fieldList.iterator();
         while (iterator.hasNext()) {
             SolrFieldMappingBean solrFieldMappingBean = (SolrFieldMappingBean) iterator.next();
-            log.info("bean is" + solrFieldMappingBean);
+            LOG.debug("bean is" + solrFieldMappingBean);
             if (valueMap.get(solrFieldMappingBean.getCqField()) instanceof Object[]) {
                 Object[] arr = (Object[]) valueMap.get(solrFieldMappingBean.getCqField());
                 for (Object value : arr) {
                     if (value != null) {
                         value = StringEscapeUtils.escapeXml(value.toString());
-                        log.debug("value after escaping character is" + value);
+                        LOG.debug("value after escaping character is" + value);
                         xmlData = CommonMethods.getXMLFieldTag(xmlData, solrFieldMappingBean.getSolrField(), value);
                     }
                 }
@@ -82,8 +118,7 @@ public class CommonMethods {
                 String value = String.valueOf(valueMap.get(solrFieldMappingBean.getCqField()));
                 if (value != null && !value.equalsIgnoreCase("null")) {
                     value = StringEscapeUtils.escapeXml(value.toString());
-                    log.debug("value after escaping character is" + value);
-                    ;
+                    LOG.debug("value after escaping character is" + value);
                     xmlData = CommonMethods.getXMLFieldTag(xmlData, solrFieldMappingBean.getSolrField(), value);
                 }
             }
