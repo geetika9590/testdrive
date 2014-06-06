@@ -122,11 +122,7 @@ public class SolrSearchServlet extends SlingSafeMethodsServlet {
             query = "*:*";
         }
         String searchIn=request.getParameter("searchIn");
-        if(query.equals("*:*")){
-            searchIn="id:/.*"+searchIn+".*/";
-            query=query+"\n"+searchIn;
-        }
-        else{
+        if(!query.contains(":")){
             query="id:/.*"+searchIn+".*"+query+".*/";
         }
         LOG.debug("query string is"+query);
@@ -276,7 +272,7 @@ public class SolrSearchServlet extends SlingSafeMethodsServlet {
 
                 while (facetFieldCountIterator.hasNext()) {
                     FacetField.Count count = facetFieldCountIterator.next();
-                    LOG.debug("Count nameis" + count.getName() + "(" + count.getCount() + ")");
+                    LOG.debug("Count name is" + count.getName() + "(" + count.getCount() + ")");
                     if (facetField.getName().endsWith(TAG_KEY)) {
                         String tagTitle = getTagTitle(count.getName());
                         if (tagTitle != null && !tagTitle.equalsIgnoreCase("")) {

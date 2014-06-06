@@ -19,7 +19,7 @@ function filterMe(parentValue,key){
             console.log( "Solr Response:", data );
         }
 
-        var text="<table width='70%' cellspacing='0' style=\"border:0px\">"+
+        var text="<table width='95%' cellspacing='0' style=\"border:0px\">"+
             "<tr>"+
             "</tr><ol>";
         var objList=data.solrDocs;
@@ -51,7 +51,7 @@ function filterMe(parentValue,key){
         text+="</ol></table>";
         document.getElementById("searchResult").innerHTML=text;
 
-        if(f1.isFacet.value=="true" && data.solrFacets !=null){
+        if(f1.isFacet.value=="true" && Object.keys(data.solrFacets).length>0){
 
             var facet= data.solrFacets;
             var facetedText="<table width='70%' cellspacing='0' style=\"border:0px\">"+
@@ -98,7 +98,7 @@ function submitMe(){
             console.log( "Solr Response:", data );
         }
 
-        var text="<table width='70%' cellspacing='0' style=\"border:0px\">"+
+        var text="<table width='95%%' cellspacing='0' style=\"border:0px\">"+
             "<tr>"+
             "</tr><ol>";
         var objList=data.solrDocs;
@@ -129,7 +129,7 @@ function submitMe(){
         }
         text+="</ol></table>";
         document.getElementById("searchResult").innerHTML=text;
-        if(f1.isFacet.value=="true" && data.solrFacets !=null){
+        if(f1.isFacet.value=="true" && Object.keys(data.solrFacets).length>0){
 
             var facet= data.solrFacets;
             var facetedText="<table width='70%' cellspacing='0' style=\"border:0px\">"+
