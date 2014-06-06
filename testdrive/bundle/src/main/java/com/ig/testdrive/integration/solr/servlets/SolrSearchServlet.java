@@ -121,6 +121,15 @@ public class SolrSearchServlet extends SlingSafeMethodsServlet {
         if (query.equals("")) {
             query = "*:*";
         }
+        String searchIn=request.getParameter("searchIn");
+        if(query.equals("*:*")){
+            searchIn="id:/.*"+searchIn+".*/";
+            query=query+"\n"+searchIn;
+        }
+        else{
+            query="id:/.*"+searchIn+".*"+query+".*/";
+        }
+        LOG.debug("query string is"+query);
         resourceResolver = request.getResourceResolver();
         LOG.debug("Resource resolver got from request is" + resourceResolver);
         String core = request.getParameter("core");
@@ -175,6 +184,8 @@ public class SolrSearchServlet extends SlingSafeMethodsServlet {
         HttpSolrServer solr = new HttpSolrServer(url);
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(query);
+
+
         solrQuery.setFields(this.queryFields);
         if (isFacet) {
             solrQuery.setFacet(true);

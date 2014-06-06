@@ -21,6 +21,11 @@
                         fieldLabel="Max No. of Results to be fetched"
                         name="./maxRows"
                         xtype="textfield"/>
+                    <SearchIn
+                            jcr:primaryType="cq:Widget"
+                            fieldLabel="Path to Search In"
+                            name="./searchIn"
+                            xtype="pathfield"/>
                     <QueryField
                         jcr:primaryType="cq:Widget"
                         fieldDescription="[Select the solr fields which needs to be returned as part of Search. Press + to add these fields.]"
