@@ -111,6 +111,19 @@
 			<version>2.0.28</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.adobe.granite</groupId>
+			<artifactId>com.adobe.granite.xssprotection</artifactId>
+			<version>5.5.24</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.day.cq</groupId>
+			<artifactId>cq-tagging</artifactId>
+			<version>5.6.4</version>
+			<scope>provided</scope>
+		</dependency>
         
     </dependencies>
 
@@ -281,6 +294,7 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Include-Resource>
+                        	{maven-resources},
                             META-INF/TestDriveTags.tld=target/classes/META-INF/TestDriveTags.tld
                         </Include-Resource>
 
