@@ -1,52 +1,50 @@
-<%@include file="/apps/testdrive/components/page/global.jspx"%>
-<%@page session="false" %><%
-%><%@taglib prefix="testdrive" uri="http://ig.testdrive.com/marketing/tags" %>
+<%@include file="/apps/testdrive/components/page/global.jspx" %>
+<%@page session="false" %>
+<%
+%>
+<%@taglib prefix="testdrive" uri="http://ig.testdrive.com/marketing/tags" %>
 <cq:includeClientLib categories="testdrive.search"/>
 
-<testdrive:solrsearch />
+<testdrive:solrsearch/>
 
-<div>
-	<center>
-	    <form name="f1" action="${currentPage.path}.html">
-	        <input size="41" maxlength="2048" name="q" value="${escapedQueryForAttr}"/>
-	        <input type="submit" value="Submit"/>
-	    </form>
+<div style="width: 100%">
+    <center>
+        <form name="f1" action="${currentPage.path}.html">
+            <input size="41" maxlength="2048" name="q" value="${escapedQueryForAttr}"/>
+            <input type="submit" value="Submit"/>
+        </form>
     </center>
-    
-    <br/>
-    <div class="searchResult">
-        <p id="responseTime"><c:out value="${solrResponseTime}"/></p>
-        
-        <div id="searchResult" class="searchLeft" >
-        
-        <c:if test="${not empty resultList}">
-        	<c:forEach var="itemMap" items="${resultList}">
-        		<a href="${itemMap['id']}.html"><c:out value="${itemMap['titleText']}" /></a><br />
-        		
-        		<c:if test="${not empty itemMap['description']}">
-	        		Description = <div><c:out value="${itemMap['description']}"/></div>
-	        		<br /><br />
-        		</c:if>
-        		  	
-        	</c:forEach>
-        </c:if>
 
+    <br/>
+
+    <div class="searchResult">
+        <div id="searchResult" class="searchLeft">
+            <c:if test="${not empty resultList}">
+                <p id="responseTime">Response time for performing the search is <c:out value="${solrResponseTime}"/>ms
+                </p>
+                <ul>
+                    <table class="searchLeft">
+                        <c:forEach var="itemMap" items="${resultList}">
+                            <c:set var="results" value="${itemMap}" scope="request" />
+                            <cq:include script="searchResults.jsp"/>
+                        </c:forEach>
+                    </table>
+                </ul>
+            </c:if>
         </div>
         <div class="searchRight">
-
-        <p>Page Tags</p>
-        <c:set var="pageTagsList" value="${facetFieldMap['pageTags']}"/>
-            <c:forEach var="facet" items="${pageTagsList}">
-                Query = ${facet.query}
-
-    			<a title="filter results" href="${currentPage}.html?q=${facet.query}"><c:out value="${facet.title} (${facet.count})"/></a> 
-        		<br />
-        	</c:forEach>
-
-            <div id="facetResult">
-            </div></div></div>
+            <c:if test="${not empty facetFieldMap}">
+                <table class="searchRight">
+                    <ul>
+                        <c:forEach var="facetMap" items="${facetFieldMap}">
+                            <c:set var="facetResults" value="${facetMap}" scope="request" />
+                            <cq:include script="facetResult.jsp" />
+                        </c:forEach>
+                    </ul>
+                </table>
+            </c:if>
+        </div>
+    </div>
 </div>
 <div style="clear:both;"></div>
-
-
 

@@ -25,4 +25,10 @@ public interface SolrFieldMap {
      */
     public HashMap<String, String> getAssetFieldMap();
 
+    /**
+     * Getter method for retrieving SearchURL
+     * @return  It return a Solr Search URL.
+     */
+    public String getSearchURL();
+
 }

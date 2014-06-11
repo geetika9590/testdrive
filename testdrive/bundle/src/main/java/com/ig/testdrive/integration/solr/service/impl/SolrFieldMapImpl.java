@@ -66,6 +66,19 @@ public class SolrFieldMapImpl implements SolrFieldMap {
     private String INDEX_VALUES;
 
     /**
+     * This is a constant field to reference the SEARCH_URL property.
+     */
+    private static final String PROP_SEARCH_ENGINE_URL = "search.engine.url";
+
+    /**
+     * It is a configuration property which holds the solr server url.
+     */
+    @Property(name = PROP_SEARCH_ENGINE_URL, label = "Search Engine URL", description = "Enter the search engine url excluding the collection/core name",
+            value = "http://localhost:8983/solr/", propertyPrivate = false)
+    private String SEARCH_URL;
+
+    private String searchURL;
+    /**
      * This is a map that contains the page field mappings.
      */
     private HashMap<String, String> pageFieldMap = new HashMap<String, String>();
@@ -74,11 +87,11 @@ public class SolrFieldMapImpl implements SolrFieldMap {
      * This is a map that contains the component field mappings.
      */
     private HashMap<String, ArrayList> compFieldMap = new HashMap<String, ArrayList>();
+
     /**
      * This is a map that contains the asset field mappings.
      */
     private HashMap<String, String> assetFieldMap = new HashMap<String, String>();
-
     private String[] pageIndexedVal, compIndexedVal, damIndexedVal;
 
     /**
@@ -86,6 +99,7 @@ public class SolrFieldMapImpl implements SolrFieldMap {
      * separates a resource type from its mappings.
      */
     private static final String RESOURCE_SEPARATOR = "@";
+
     /**
      * This variable contains the separator which
      * separates each property mapping from each other.
@@ -106,7 +120,6 @@ public class SolrFieldMapImpl implements SolrFieldMap {
      * The reference path property is present between these separators.
      */
     private static final String REFERENCE_END_SEPARATOR = "}";
-
     /**
      * Activate method for this class
      *
@@ -119,8 +132,12 @@ public class SolrFieldMapImpl implements SolrFieldMap {
         pageIndexedVal = (String[]) properties.get(PAGE_METADATA_VALUES_TO_BE_INDEXED);
         compIndexedVal = (String[]) properties.get(COMP_METADATA_VALUES_TO_BE_INDEXED);
         damIndexedVal = (String[]) properties.get(ASSET_METADATA_VALUES_TO_BE_INDEXED);
+        searchURL=(String) properties.get(PROP_SEARCH_ENGINE_URL);
         parseIndexedValues(pageIndexedVal, damIndexedVal, compIndexedVal);
     }
+
+
+
 
     /**
      * Modified method for this class
@@ -141,6 +158,16 @@ public class SolrFieldMapImpl implements SolrFieldMap {
     @Override
     public HashMap<String, String> getPageFieldMap() {
         return pageFieldMap;
+    }
+
+    /**
+     * Getter method for Search URL.
+     *
+     * @return It returns the searchURL.
+     */
+    @Override
+    public String getSearchURL() {
+        return searchURL;
     }
 
     /**

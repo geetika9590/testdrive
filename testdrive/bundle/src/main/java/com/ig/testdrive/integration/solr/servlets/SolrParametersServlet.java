@@ -100,6 +100,10 @@ public class SolrParametersServlet extends SlingSafeMethodsServlet {
                     }
                 }
             }
+            jsonObject=new JSONObject();
+            jsonObject.put("text", "type");
+            jsonObject.put("value", "type");
+            jsonArray.put(jsonObject);
             LOG.debug("Solr field set is " + propertySet);
             if (jsonArray.length() > 0) {
                 out.print(jsonArray);

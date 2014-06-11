@@ -20,6 +20,17 @@ div.searchLeft{
     width:70%;
 }
 
+table.searchLeft{
+    width:95%;
+    cellspacing:0;
+    border:0px;
+}
+table.searchRight{
+    width:100%;
+    cellspacing:0;
+    border:0px;
+}
+
 div.searchTrends {
     text-align: justify;
 }
