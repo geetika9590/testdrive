@@ -37,6 +37,7 @@ public class CommonMethods {
                 Object[] arr = (Object[]) valueMap.get(propName);
                 for (Object value : arr) {
                     if (value != null) {
+                        value = CommonMethods.stripHTML(value.toString());
                         value = StringEscapeUtils.escapeXml(value.toString());
                         LOG.debug("value after escaping character is" + value);
                         xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
@@ -45,6 +46,7 @@ public class CommonMethods {
             } else {
                 String value = String.valueOf(valueMap.get(propName));
                 if (value != null && !value.equalsIgnoreCase("null")) {
+                    value = CommonMethods.stripHTML(value.toString());
                     value = StringEscapeUtils.escapeXml(value.toString());
                     LOG.debug("value after escaping character is" + value);
                     xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
@@ -72,6 +74,7 @@ public class CommonMethods {
                 Object[] arr = (Object[]) assetMetadata.get(propName);
                 for (Object value : arr) {
                     if (value != null) {
+                        value = CommonMethods.stripHTML(value.toString());
                         value = StringEscapeUtils.escapeXml(value.toString());
                         LOG.debug("value after escaping character is" + value);
                         xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
@@ -80,6 +83,7 @@ public class CommonMethods {
             } else {
                 String value = String.valueOf(assetMetadata.get(propName));
                 if (value != null && !value.equalsIgnoreCase("null")) {
+                    value = CommonMethods.stripHTML(value.toString());
                     value = StringEscapeUtils.escapeXml(value.toString());
                     LOG.debug("value after escaping character is" + value);
                     xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
@@ -109,6 +113,7 @@ public class CommonMethods {
                 Object[] arr = (Object[]) valueMap.get(solrFieldMappingBean.getCqField());
                 for (Object value : arr) {
                     if (value != null) {
+                        value = CommonMethods.stripHTML(value.toString());
                         value = StringEscapeUtils.escapeXml(value.toString());
                         LOG.debug("value after escaping character is" + value);
                         xmlData = CommonMethods.getXMLFieldTag(xmlData, solrFieldMappingBean.getSolrField(), value);
@@ -117,6 +122,7 @@ public class CommonMethods {
             } else {
                 String value = String.valueOf(valueMap.get(solrFieldMappingBean.getCqField()));
                 if (value != null && !value.equalsIgnoreCase("null")) {
+                    value = CommonMethods.stripHTML(value.toString());
                     value = StringEscapeUtils.escapeXml(value.toString());
                     LOG.debug("value after escaping character is" + value);
                     xmlData = CommonMethods.getXMLFieldTag(xmlData, solrFieldMappingBean.getSolrField(), value);
@@ -138,5 +144,15 @@ public class CommonMethods {
                 .append("\">").append(value.toString()).append("</field>\n");
         return xmlData;
 
+    }
+
+    /**
+     * This method strips the HTML tags present in the String.
+     * @param text
+     * @return Stripped String
+     */
+    public static String stripHTML(String text){
+        text = text.replaceAll("\\<.*?\\>", "");
+        return text;
     }
 }
