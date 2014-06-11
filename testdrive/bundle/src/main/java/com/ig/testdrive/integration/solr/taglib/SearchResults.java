@@ -245,40 +245,5 @@ public class SearchResults extends SimpleTagSupport {
         }
 
         pageContext.setAttribute("facetFieldMap", solrFacetFieldMap);
-        LOG.debug("facet field map is" + solrFacetFieldMap);
     }
-
-    /**
-     * This method traverses the TAG_PATH and returns the title of a tag.
-     *
-     * @param tagKey
-     * @return
-     */
-    private String getTagTitle(String tagKey) {
-        String title = "";
-        String resPath = "";
-        if (tagKey.contains(":") && tagKey.contains("/")) {
-            String node[] = tagKey.split(":");
-            String[] prop = node[1].split("/");
-            resPath = TAG_PATH + "/" + node[0] + "/" + prop[0] + "/" + prop[1];
-            LOG.debug("res path is" + resPath);
-        } else if (tagKey.contains(":")) {
-            String node[] = tagKey.split(":");
-            resPath = TAG_PATH + "/" + node[0] + "/" + node[1];
-            LOG.debug("res path is" + resPath);
-        } else {
-            resPath = TAG_PATH + "/" + tagKey;
-            LOG.debug("res path is" + resPath);
-        }
-
-        Resource resource = resourceResolver.getResource(resPath);
-        if (resource != null && !ResourceUtil.isNonExistingResource(resource)) {
-            ValueMap valueMap = resource.adaptTo(ValueMap.class);
-            title = (String) valueMap.get("jcr:title");
-        }
-
-        LOG.debug("title fetched is" + title);
-        return title;
-    }
-
 }

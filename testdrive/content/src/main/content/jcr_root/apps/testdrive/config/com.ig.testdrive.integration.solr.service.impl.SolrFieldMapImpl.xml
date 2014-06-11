@@ -3,4 +3,5 @@
     jcr:primaryType="sling:OsgiConfig"
     asset.indexed.values="[titleText=dc:title,description=dc:description,format=dc:format,damTags=cq:tags]"
     comp.indexed.values="[foundation/components/title@title=jcr:title,foundation/components/textimage@title=jcr:title&lt;>text_data=fileReference,foundation/components/image@text_data=fileReference&lt;>title=jcr:title,foundation/components/search@title=jcr:title&lt;>text_data=searchIn,geometrixx/components/header@text_data=text,foundation/components/table@text_data=tableData,geometrixx/components/text@text_data=text,foundation/components/text@text_data=text,geometrixx/components/productlist/sku@title=ProductId&lt;>text_data=ProductName,geometrixx/components/list@text_data=listFrom,foundation/components/download@title=jcr:title&lt;>text_data=fileReference,foundation/components/form/text@title=jcr:title,geometrixx/components/title@title=jcr:title,foundation/components/chart@title=chartType&lt;>text_data=chartData]"
-    page.indexed.values="[titleText=jcr:title,description=jcr:description,pageTags=cq:tags]"/>
+    page.indexed.values="[titleText=jcr:title,description=jcr:description,pageTags=cq:tags]"
+    search.engine.url="http://localhost:8983/solr/"/>
