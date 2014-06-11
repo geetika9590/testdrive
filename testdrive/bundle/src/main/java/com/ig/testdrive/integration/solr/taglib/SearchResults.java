@@ -38,84 +38,81 @@ import com.day.cq.tagging.TagManager;
 import com.ig.testdrive.integration.solr.beans.Facet;
 
 public class SearchResults extends SimpleTagSupport {
-	
-	final Logger LOG = LoggerFactory.getLogger(this.getClass());
-	
-	private String SEARCH_URL;
-	private static final String TAG_KEY = "Tags";
-	private static final String TAG_PATH = "/etc/tags";
-	
-	private ResourceResolver resourceResolver;
-	
-	private PageContext pageContext;
-	
-	@Override
+
+    final Logger LOG = LoggerFactory.getLogger(this.getClass());
+
+    private String SEARCH_URL;
+    private static final String TAG_KEY = "Tags";
+    private static final String TAG_PATH = "/etc/tags";
+
+    private ResourceResolver resourceResolver;
+
+    private PageContext pageContext;
+
+    @Override
     public void doTag() throws JspException {
-		
-		this.pageContext = (PageContext) getJspContext();
-		
-		ValueMap properties = (ValueMap) pageContext.getAttribute("properties");
-        SlingScriptHelper sling= (SlingScriptHelper) pageContext.getAttribute("sling");
-		SlingHttpServletRequest request = (SlingHttpServletRequest)pageContext.getAttribute("slingRequest");
-		SlingHttpServletResponse response = (SlingHttpServletResponse)pageContext.getAttribute("slingResponse");
-		resourceResolver = (ResourceResolver)pageContext.getAttribute("resourceResolver");
-		Resource resource = (Resource)pageContext.getAttribute("resource");
-		XSSAPI xssAPI = (XSSAPI)pageContext.getAttribute("xssAPI");
 
-        SolrFieldMap solrFieldMap=sling.getService(SolrFieldMap.class);
+        this.pageContext = (PageContext) getJspContext();
 
-        SEARCH_URL= solrFieldMap.getSearchURL();
+        ValueMap properties = (ValueMap) pageContext.getAttribute("properties");
+        SlingScriptHelper sling = (SlingScriptHelper) pageContext.getAttribute("sling");
+        SlingHttpServletRequest request = (SlingHttpServletRequest) pageContext.getAttribute("slingRequest");
+        SlingHttpServletResponse response = (SlingHttpServletResponse) pageContext.getAttribute("slingResponse");
+        resourceResolver = (ResourceResolver) pageContext.getAttribute("resourceResolver");
+        Resource resource = (Resource) pageContext.getAttribute("resource");
+        XSSAPI xssAPI = (XSSAPI) pageContext.getAttribute("xssAPI");
 
-		String query = request.getParameter("q");
-		final String escapedQuery = xssAPI.encodeForHTML(query);
-		final String escapedQueryForAttr = xssAPI.encodeForHTMLAttr(query);
-		
-		pageContext.setAttribute("escapedQuery", escapedQuery);
-		pageContext.setAttribute("escapedQueryForAttr", escapedQueryForAttr);
-		
+        SolrFieldMap solrFieldMap = sling.getService(SolrFieldMap.class);
+
+        SEARCH_URL = solrFieldMap.getSearchURL();
+
+        String query = request.getParameter("q");
+        final String escapedQuery = xssAPI.encodeForHTML(query);
+        final String escapedQueryForAttr = xssAPI.encodeForHTMLAttr(query);
+
+        pageContext.setAttribute("escapedQuery", escapedQuery);
+        pageContext.setAttribute("escapedQueryForAttr", escapedQueryForAttr);
+
         LOG.debug("Query parameter received from request is {}", query);
-        
-        if (StringUtils.isNotBlank(query)) {        	
-	        
-	        String searchIn=properties.get("searchIn","/content");
-	        if(!query.contains(":")){
-	            query="id:/.*"+searchIn+".*"+query+".*/";
-	        }
-	        LOG.debug("query string is"+query);
-	                
-	        try {       
-	            getSolrResponseAsJson(resource, query);
-	        } catch (Exception e) {
-	            LOG.debug("Error during quering Data =" + e);
-	        }
+
+        if (StringUtils.isNotBlank(query)) {
+            String searchIn = properties.get("searchIn", "/content");
+            searchIn = searchIn.replace("/", "\\/");
+            query = "id:/.*" + searchIn + ".*/" + " AND " + query;
+            LOG.debug("query string is" + query);
+            try {
+                getSolrResponseAsJson(resource, query);
+            } catch (Exception e) {
+                LOG.debug("Error during quering Data =" + e);
+            }
 
         }
     }
-	
-	
-	/**
+
+
+    /**
      * It prepares the query,hits the server
      * and fetches the response.
      *
      * @param query
      * @throws Exception
      */
-	private void getSolrResponseAsJson(Resource resource, String query) throws Exception {
-    	
-    	ValueMap properties = resource.adaptTo(ValueMap.class);
-		
-		String core = properties.get("core","geometrixx");
-        String maxRows = properties.get("maxRows","20");
-        boolean isFacet = Boolean.parseBoolean(properties.get("isFacet","false"));
-        String[] facetFields = (String[])properties.get("facetFields");
+    private void getSolrResponseAsJson(Resource resource, String query) throws Exception {
+
+        ValueMap properties = resource.adaptTo(ValueMap.class);
+
+        String core = properties.get("core", "geometrixx");
+        String maxRows = properties.get("maxRows", "20");
+        boolean isFacet = Boolean.parseBoolean(properties.get("isFacet", "false"));
+        String[] facetFields = (String[]) properties.get("facetFields");
         String[] queryFields = (String[]) properties.get("queryFields");
-    	String url = SEARCH_URL + core;
+        String url = SEARCH_URL + core;
 
         HttpSolrServer solr = new HttpSolrServer(url);
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(query);
         solrQuery.setFields(queryFields);
-        
+
         if (isFacet) {
             solrQuery.setFacet(true);
             solrQuery.setFacetMinCount(1);
@@ -127,12 +124,13 @@ public class SearchResults extends SimpleTagSupport {
             }
         }
         solrQuery.setStart(0);
+
         solrQuery.setRows(Integer.parseInt(maxRows));
-            LOG.debug("Solr query is" + solrQuery);
-        
+        LOG.debug("Solr query is" + solrQuery);
+
         QueryResponse qp = solr.query(solrQuery);
         LOG.debug("Total query time = {}", qp.getElapsedTime());
-        
+
         parseResponse(qp, isFacet);
     }
 
@@ -144,55 +142,53 @@ public class SearchResults extends SimpleTagSupport {
      * @throws Exception
      */
     private void parseResponse(QueryResponse qp, boolean isFacet) throws Exception {
-        SolrDocumentList solrDocumentList = qp.getResults();        
+        SolrDocumentList solrDocumentList = qp.getResults();
         List<Map<String, Object>> documentList = new ArrayList<Map<String, Object>>();
-        
+
         for (int i = 0; i < solrDocumentList.size(); ++i) {
-            LOG.debug("Solr doc list"+solrDocumentList);
+            LOG.debug("Solr doc list" + solrDocumentList);
             Map<String, Object> hitMap = new HashMap<String, Object>();
             String key = "";
             String value = "";
             boolean isAllowed = false;
             boolean evaluateId = true;
-            
             SolrDocument solrDocList = solrDocumentList.get(i);
-            
             for (Map.Entry<String, Object> stringObjectEntry : solrDocList) {
-                
+
                 if (solrDocList.containsKey("id")) {
-                	if (evaluateId) {
-                		value = solrDocList.get("id").toString();
-                    	
-                    	Resource resource = resourceResolver.getResource(value);
+                    if (evaluateId) {
+                        value = solrDocList.get("id").toString();
+
+                        Resource resource = resourceResolver.getResource(value);
                         if (resource != null && !ResourceUtil.isNonExistingResource(resource)) {
-                            isAllowed = true;                            
+                            isAllowed = true;
                             hitMap.put("id", value);
                         }
                         evaluateId = false;
-                	}
-                	
-                	if (isAllowed) {
+                    }
+
+                    if (isAllowed) {
                         key = stringObjectEntry.getKey();
-                        value = stringObjectEntry.getValue().toString().replace("[","").replace("]","");
-                    	LOG.debug("JSON stringObjectEntry.getValue() = {}", stringObjectEntry.getValue());
-                    	
-                    	hitMap.put(key, value);
-                    }                    
+                        value = stringObjectEntry.getValue().toString().replace("[", "").replace("]", "");
+                        LOG.debug("JSON stringObjectEntry.getValue() = {}", stringObjectEntry.getValue());
+
+                        hitMap.put(key, value);
+                    }
                 }
-                
+
             }
-            
+
             if (isAllowed) {
-            	documentList.add(hitMap);
-            }            
+                documentList.add(hitMap);
+            }
         }
-        
+
         pageContext.setAttribute("resultList", documentList);
         pageContext.setAttribute("solrResponseTime", qp.getQTime());
-        
+
         if (isFacet) {
-        	//pageContext.setAttribute("solrFacets", parseFacetFields(qp.getFacetFields()));
-        	parseFacetFields(qp.getFacetFields());
+            //pageContext.setAttribute("solrFacets", parseFacetFields(qp.getFacetFields()));
+            parseFacetFields(qp.getFacetFields());
         }
     }
 
@@ -208,7 +204,7 @@ public class SearchResults extends SimpleTagSupport {
 
         Iterator<FacetField> facetFieldIterator = facetFields.iterator();
         Map<String, List<Facet>> solrFacetFieldMap = new HashMap<String, List<Facet>>();
-        XSSAPI xssAPI = (XSSAPI)pageContext.getAttribute("xssAPI");
+        XSSAPI xssAPI = (XSSAPI) pageContext.getAttribute("xssAPI");
 
 
         while (facetFieldIterator.hasNext()) {
@@ -217,39 +213,39 @@ public class SearchResults extends SimpleTagSupport {
             if (facetField.getValueCount() != 0) {
                 List<FacetField.Count> facetFieldCounts = facetField.getValues();
                 Iterator<FacetField.Count> facetFieldCountIterator = facetFieldCounts.iterator();
-                
+
                 List<Facet> facetTypeList = new ArrayList<Facet>();
 
                 while (facetFieldCountIterator.hasNext()) {
                     FacetField.Count count = facetFieldCountIterator.next();
                     LOG.debug("Count name is" + count.getName() + "(" + count.getCount() + ")");
-                    
-                    String facetTitle = ""; 
+
+                    String facetTitle = "";
                     String facetQuery = pageContext.getAttribute("escapedQuery").toString() + "+AND+" + facetField.getName();
-                    
+
                     if (facetField.getName().endsWith(TAG_KEY)) {
-                    	
-                    	TagManager tagManager = ((ResourceResolver)pageContext.getAttribute("resourceResolver")).adaptTo(TagManager.class);                    
+
+                        TagManager tagManager = ((ResourceResolver) pageContext.getAttribute("resourceResolver")).adaptTo(TagManager.class);
                         Tag tag = tagManager.resolve(count.getName());
-                        facetTitle = StringUtils.isNotBlank(tag.getTitle())?tag.getTitle():tag.getName();
-                        String tagString=facetField.getName()+":"+"\""+count.getName()+"\"";
+                        facetTitle = StringUtils.isNotBlank(tag.getTitle()) ? tag.getTitle() : tag.getName();
+                        String tagString = facetField.getName() + ":" + "\"" + count.getName() + "\"";
                         final String escapedQuery = xssAPI.encodeForHTML(tagString);
                         facetQuery = pageContext.getAttribute("escapedQuery").toString() + "+AND+" + escapedQuery;
 
                     } else {
-                    	facetTitle = count.getName();
+                        facetTitle = count.getName();
                     }
-                                        
+
                     Facet facet = new Facet(facetField.getName(), facetTitle, String.valueOf(count.getCount()), facetQuery);
                     facetTypeList.add(facet);
-                }                
-                
+                }
+
                 solrFacetFieldMap.put(facetField.getName(), facetTypeList);
             }
         }
-        
+
         pageContext.setAttribute("facetFieldMap", solrFacetFieldMap);
-        LOG.debug("facet field map is"+solrFacetFieldMap);
+        LOG.debug("facet field map is" + solrFacetFieldMap);
     }
 
     /**

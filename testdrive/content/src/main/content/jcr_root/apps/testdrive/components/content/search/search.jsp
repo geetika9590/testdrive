@@ -20,12 +20,12 @@
     <div class="searchResult">
         <div id="searchResult" class="searchLeft">
             <c:if test="${not empty resultList}">
-                <p id="responseTime">Response time for performing the search is <c:out value="${solrResponseTime}"/>ms
-                </p>
+                <p id="responseTime">Response time for fetching <c:out value="${fn:length(resultList)}"/> results is
+                    <c:out value="${solrResponseTime}"/> ms.</p>
                 <ul>
                     <table class="searchLeft">
                         <c:forEach var="itemMap" items="${resultList}">
-                            <c:set var="results" value="${itemMap}" scope="request" />
+                            <c:set var="results" value="${itemMap}" scope="request"/>
                             <cq:include script="searchResults.jsp"/>
                         </c:forEach>
                     </table>
@@ -37,8 +37,8 @@
                 <table class="searchRight">
                     <ul>
                         <c:forEach var="facetMap" items="${facetFieldMap}">
-                            <c:set var="facetResults" value="${facetMap}" scope="request" />
-                            <cq:include script="facetResult.jsp" />
+                            <c:set var="facetResults" value="${facetMap}" scope="request"/>
+                            <cq:include script="facetResult.jsp"/>
                         </c:forEach>
                     </ul>
                 </table>
