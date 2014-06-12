@@ -27,7 +27,9 @@ import java.util.*;
 @Properties({
         @Property(name = "service.description", value = "This servlet extracts the solr fields which are searchable "),
         @Property(name = "service.vendor", value = "Intelligrape"),
-        @Property(name = "sling.servlet.paths", value = "/bin/service/parameters.json", propertyPrivate = true),
+        @Property(name = "sling.servlet.paths", value = "/bin/service/parameters", propertyPrivate = true),
+        @Property(name = "sling.servlet.extensions", value = "json", propertyPrivate = true),
+        @Property(name = "sling.servlet.selectors", value = "facet", propertyPrivate = true),
         @Property(name = "sling.servlet.methods", value = "GET", propertyPrivate = true)
 })
 public class SolrParametersServlet extends SlingSafeMethodsServlet {
@@ -78,39 +80,21 @@ public class SolrParametersServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
-        HashMap[] maps = {solrFieldMap.getPageFieldMap(), solrFieldMap.getCompFieldMap(), solrFieldMap.getAssetFieldMap()};
-        addFields(maps);
-        Iterator iterator = propertySet.iterator();
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
+        String selectorString = request.getRequestPathInfo().getSelectorString();
+        JSONArray jsonArray;
         try {
-            jsonObject.put("text", "id");
-            jsonObject.put("value", "id");
-            jsonArray.put(jsonObject);
-            while (iterator.hasNext()) {
-                jsonObject = new JSONObject();
-                Object obj=iterator.next();
-                if (obj!=null)      {
-                    String field = obj.toString();
-                    if(!field.equalsIgnoreCase("text_data"))  {
-                        jsonObject.put("text", field);
-                        jsonObject.put("value", field);
-                        LOG.debug("json obj is" + jsonObject);
-                        jsonArray.put(jsonObject);
-                    }
-                }
+            if (selectorString.contains("facetfields")) {
+                jsonArray = addFacetFields();
+            } else {
+                jsonArray = addAllFields();
             }
-            jsonObject=new JSONObject();
-            jsonObject.put("text", "type");
-            jsonObject.put("value", "type");
-            jsonArray.put(jsonObject);
-            LOG.debug("Solr field set is " + propertySet);
+             LOG.debug("JSON Array returned is "+jsonArray);
             if (jsonArray.length() > 0) {
                 out.print(jsonArray);
             } else {
                 out.print("[]");
             }
-        } catch (JSONException e) {
+        }catch (JSONException e){
             LOG.error("Exception occured while updating Json object " + e.getMessage());
             e.printStackTrace();
         }
@@ -142,4 +126,60 @@ public class SolrParametersServlet extends SlingSafeMethodsServlet {
             }
         }
     }
+
+    /**
+     * This method extracts all configured solr fields types.
+     *
+     * @return JSONArray of SolrFields
+     */
+    public JSONArray addAllFields() throws JSONException {
+
+        HashMap[] maps = {solrFieldMap.getPageFieldMap(), solrFieldMap.getCompFieldMap(), solrFieldMap.getAssetFieldMap()};
+        addFields(maps);
+        Iterator iterator = propertySet.iterator();
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonObject.put("text", "id");
+        jsonObject.put("value", "id");
+        jsonArray.put(jsonObject);
+        while (iterator.hasNext()) {
+            jsonObject = new JSONObject();
+            Object obj = iterator.next();
+            if (obj != null) {
+                String field = obj.toString();
+                if (!field.equalsIgnoreCase("text_data")) {
+                    jsonObject.put("text", field);
+                    jsonObject.put("value", field);
+                    LOG.debug("json obj is" + jsonObject);
+                    jsonArray.put(jsonObject);
+                }
+            }
+        }
+        jsonObject = new JSONObject();
+        jsonObject.put("text", "type");
+        jsonObject.put("value", "type");
+        jsonArray.put(jsonObject);
+        LOG.debug("Solr field set is " + propertySet);
+        return jsonArray;
+    }
+
+    /**
+     * This method extracts all configured facet fields .
+     *
+     * @return JSONArray of facetFields
+     */
+
+    public JSONArray addFacetFields() throws JSONException {
+        String[] facetFields = solrFieldMap.getFacetFields();
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        for (String s:facetFields){
+            jsonObject=new JSONObject();
+            jsonObject.put("text",s);
+            jsonObject.put("value",s);
+            jsonArray.put(jsonObject);
+        }
+        return jsonArray;
+    }
+
 }

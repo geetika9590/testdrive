@@ -30,5 +30,11 @@ public interface SolrFieldMap {
      * @return  It return a Solr Search URL.
      */
     public String getSearchURL();
+    /**
+     * Getter method for facetFields.
+     *
+     * @return It returns the facetFields.
+     */
+    public String[] getFacetFields();
 
 }

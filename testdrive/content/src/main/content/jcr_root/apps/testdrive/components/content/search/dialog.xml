@@ -11,12 +11,13 @@
                 jcr:primaryType="cq:Panel"
                 title="Solr Server Information">
                 <items jcr:primaryType="cq:WidgetCollection">
-                    <ServerUrl
+                    <CoreName
                         jcr:primaryType="cq:Widget"
                         fieldLabel="Solr Core Name"
                         name="./solrCore"
-                        xtype="textfield"/>
-                    <MaxRows
+                        xtype="textfield"
+                        allowBlank="false"/>
+                    <RowsPerPage
                         jcr:primaryType="cq:Widget"
                         fieldLabel="Max No. of Results to be fetched"
                         name="./maxRows"
@@ -36,7 +37,7 @@
                         <fieldConfig
                             jcr:primaryType="nt:unstructured"
                             allowBlank="false"
-                            options="/bin/service/parameters.json"
+                            options="/bin/service/parameters.queryfields.json"
                             type="select"
                             xtype="selection"/>
                     </QueryField>
@@ -61,7 +62,7 @@
                         <fieldConfig
                             jcr:primaryType="nt:unstructured"
                             allowBlank="false"
-                            options="/bin/service/parameters.json"
+                            options="/bin/service/parameters.facetfields.json"
                             type="select"
                             xtype="selection"/>
                     </FacetFields>

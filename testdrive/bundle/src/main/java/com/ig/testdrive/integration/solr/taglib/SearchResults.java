@@ -201,11 +201,9 @@ public class SearchResults extends SimpleTagSupport {
      */
     private void parseFacetFields(List<FacetField> facetFields) throws JSONException {
 
-
         Iterator<FacetField> facetFieldIterator = facetFields.iterator();
         Map<String, List<Facet>> solrFacetFieldMap = new HashMap<String, List<Facet>>();
         XSSAPI xssAPI = (XSSAPI) pageContext.getAttribute("xssAPI");
-
 
         while (facetFieldIterator.hasNext()) {
             FacetField facetField = facetFieldIterator.next();
@@ -213,25 +211,20 @@ public class SearchResults extends SimpleTagSupport {
             if (facetField.getValueCount() != 0) {
                 List<FacetField.Count> facetFieldCounts = facetField.getValues();
                 Iterator<FacetField.Count> facetFieldCountIterator = facetFieldCounts.iterator();
-
                 List<Facet> facetTypeList = new ArrayList<Facet>();
 
                 while (facetFieldCountIterator.hasNext()) {
                     FacetField.Count count = facetFieldCountIterator.next();
                     LOG.debug("Count name is" + count.getName() + "(" + count.getCount() + ")");
-
                     String facetTitle = "";
-                    String facetQuery = pageContext.getAttribute("escapedQuery").toString() + "+AND+" + facetField.getName();
+                    String facetString = facetField.getName() + ":" + "\"" + count.getName() + "\"";
+                    final String escapedQuery = xssAPI.encodeForHTML(facetString);
+                    String facetQuery = pageContext.getAttribute("escapedQuery").toString() + "+AND+" + escapedQuery;
 
                     if (facetField.getName().endsWith(TAG_KEY)) {
-
                         TagManager tagManager = ((ResourceResolver) pageContext.getAttribute("resourceResolver")).adaptTo(TagManager.class);
                         Tag tag = tagManager.resolve(count.getName());
                         facetTitle = StringUtils.isNotBlank(tag.getTitle()) ? tag.getTitle() : tag.getName();
-                        String tagString = facetField.getName() + ":" + "\"" + count.getName() + "\"";
-                        final String escapedQuery = xssAPI.encodeForHTML(tagString);
-                        facetQuery = pageContext.getAttribute("escapedQuery").toString() + "+AND+" + escapedQuery;
-
                     } else {
                         facetTitle = count.getName();
                     }

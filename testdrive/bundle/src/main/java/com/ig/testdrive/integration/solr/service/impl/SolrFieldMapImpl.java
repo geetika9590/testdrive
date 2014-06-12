@@ -39,6 +39,16 @@ public class SolrFieldMapImpl implements SolrFieldMap {
     private static final String COMP_METADATA_VALUES_TO_BE_INDEXED = "comp.indexed.values";
 
     /**
+     * This is a constant field to reference the SEARCH_URL property.
+     */
+    private static final String PROP_SEARCH_ENGINE_URL = "search.engine.url";
+
+    /**
+     * This is a constant field to reference the facet fields property.
+     */
+    private static final String PROP_FACET_FIELDS = "search.facet.field.values";
+
+    /**
      * This is a configuration property for
      * configuring the properties for a page that can be indexed.
      */
@@ -66,11 +76,6 @@ public class SolrFieldMapImpl implements SolrFieldMap {
     private String INDEX_VALUES;
 
     /**
-     * This is a constant field to reference the SEARCH_URL property.
-     */
-    private static final String PROP_SEARCH_ENGINE_URL = "search.engine.url";
-
-    /**
      * It is a configuration property which holds the solr server url.
      */
     @Property(name = PROP_SEARCH_ENGINE_URL, label = "Search Engine URL", description = "Enter the search engine url excluding the collection/core name",
@@ -78,6 +83,10 @@ public class SolrFieldMapImpl implements SolrFieldMap {
     private String SEARCH_URL;
 
     private String searchURL;
+
+    @Property(name = PROP_FACET_FIELDS, label = "Facet Fields", description = "Enter the facet fields which will be used for faceting",
+            value = {"type","format","pageTags","damTags"}, propertyPrivate = false)
+    private String FACET_FIELDS;
     /**
      * This is a map that contains the page field mappings.
      */
@@ -92,7 +101,7 @@ public class SolrFieldMapImpl implements SolrFieldMap {
      * This is a map that contains the asset field mappings.
      */
     private HashMap<String, String> assetFieldMap = new HashMap<String, String>();
-    private String[] pageIndexedVal, compIndexedVal, damIndexedVal;
+    private String[] pageIndexedVal, compIndexedVal, damIndexedVal,facetFields;
 
     /**
      * This variable contains the separator which
@@ -120,6 +129,8 @@ public class SolrFieldMapImpl implements SolrFieldMap {
      * The reference path property is present between these separators.
      */
     private static final String REFERENCE_END_SEPARATOR = "}";
+
+
     /**
      * Activate method for this class
      *
@@ -133,6 +144,7 @@ public class SolrFieldMapImpl implements SolrFieldMap {
         compIndexedVal = (String[]) properties.get(COMP_METADATA_VALUES_TO_BE_INDEXED);
         damIndexedVal = (String[]) properties.get(ASSET_METADATA_VALUES_TO_BE_INDEXED);
         searchURL=(String) properties.get(PROP_SEARCH_ENGINE_URL);
+        facetFields=(String[])properties.get(PROP_FACET_FIELDS);
         parseIndexedValues(pageIndexedVal, damIndexedVal, compIndexedVal);
     }
 
@@ -178,6 +190,18 @@ public class SolrFieldMapImpl implements SolrFieldMap {
     @Override
     public HashMap<String, ArrayList> getCompFieldMap() {
         return compFieldMap;
+    }
+
+
+
+    /**
+     * Getter method for facetFields.
+     *
+     * @return It returns the facetFields.
+     */
+    @Override
+    public String[] getFacetFields() {
+        return facetFields;
     }
 
     /**
