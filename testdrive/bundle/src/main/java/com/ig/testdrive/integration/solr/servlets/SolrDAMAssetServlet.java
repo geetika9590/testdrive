@@ -1,7 +1,7 @@
 package com.ig.testdrive.integration.solr.servlets;
 
 import com.day.cq.dam.api.Asset;
-import com.ig.testdrive.commons.util.CommonMethods;
+import com.ig.testdrive.commons.util.SolrSearchUtil;
 import com.ig.testdrive.integration.solr.service.SolrFieldMap;
 import org.apache.felix.scr.annotations.*;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -9,7 +9,6 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.Servlet;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 
 @Component(label = "Solr DAM Asset servlet", description = "This servlet generates for DAM assets",
@@ -114,7 +112,7 @@ public class SolrDAMAssetServlet extends SlingSafeMethodsServlet {
                 "<doc>\n" + "<field name=\"id\">" + asset.getPath() +
                 "</field>\n" + "<field name=\"type\">asset</field>\n");
         LOG.debug("xmlData so far is" + xmlData);
-        xmlData = CommonMethods.parseFieldMap(assetMetadata, fieldMap, xmlData);
+        xmlData = SolrSearchUtil.parseFieldMap(assetMetadata, fieldMap, xmlData);
         xmlData.append("</doc>\n").append("</add>");
         LOG.debug("Xml generated is" + xmlData);
         return xmlData.toString();

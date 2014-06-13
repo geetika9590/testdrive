@@ -3,7 +3,7 @@
 %>
 <tr>
     <td><br/>
-        <c:set var="facetMap" value="${requestScope.facetResults}"/>
+        <%--<c:set var="facetMap" value="${requestScope.facetResults}"/>--%>
         <c:out value="${facetMap.key}"/>
     </td>
 </tr>

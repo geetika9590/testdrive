@@ -27,7 +27,7 @@ public interface SolrFieldMap {
 
     /**
      * Getter method for retrieving SearchURL
-     * @return  It return a Solr Search URL.
+     * @return  It returns the Solr Search URL.
      */
     public String getSearchURL();
     /**
@@ -36,5 +36,12 @@ public interface SolrFieldMap {
      * @return It returns the facetFields.
      */
     public String[] getFacetFields();
+
+    /**
+     * Getter method for retrieving buffer size which
+     * describes the maximum rows that will be fetched in a go.
+     * @return  It return the search buffer size.
+     */
+    public int getBufferSize();
 
 }

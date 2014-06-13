@@ -1,6 +1,6 @@
 <%@include file="/apps/testdrive/components/page/global.jspx" %><%
 %><tr><td><br /><li>
-<c:set var="itemMap" value="${requestScope.results}"/>
+<%--<c:set var="itemMap" value="${requestScope.results}"/>--%>
     <c:choose>
         <c:when test="${itemMap['type'] eq 'page'}">
             <c:choose>

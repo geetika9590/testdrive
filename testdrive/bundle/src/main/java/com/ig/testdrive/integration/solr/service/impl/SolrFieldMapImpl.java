@@ -49,6 +49,12 @@ public class SolrFieldMapImpl implements SolrFieldMap {
     private static final String PROP_FACET_FIELDS = "search.facet.field.values";
 
     /**
+     * This is a constant field to reference the facet fields property.
+     */
+    private static final String PROP_BUFFER_SIZE = "search.buffer.size";
+
+
+    /**
      * This is a configuration property for
      * configuring the properties for a page that can be indexed.
      */
@@ -84,9 +90,16 @@ public class SolrFieldMapImpl implements SolrFieldMap {
 
     private String searchURL;
 
+    private int bufferSize;
+
     @Property(name = PROP_FACET_FIELDS, label = "Facet Fields", description = "Enter the facet fields which will be used for faceting",
             value = {"type","format","pageTags","damTags"}, propertyPrivate = false)
     private String FACET_FIELDS;
+
+    @Property(name = PROP_BUFFER_SIZE, label = "Buffer Size", description = "Enter the max no. of rows to be fetched from Solr.",
+            value = "400", propertyPrivate = false)
+    private String BUFFER_SIZE;
+
     /**
      * This is a map that contains the page field mappings.
      */
@@ -145,6 +158,7 @@ public class SolrFieldMapImpl implements SolrFieldMap {
         damIndexedVal = (String[]) properties.get(ASSET_METADATA_VALUES_TO_BE_INDEXED);
         searchURL=(String) properties.get(PROP_SEARCH_ENGINE_URL);
         facetFields=(String[])properties.get(PROP_FACET_FIELDS);
+        bufferSize=Integer.parseInt((String)properties.get(PROP_BUFFER_SIZE));
         parseIndexedValues(pageIndexedVal, damIndexedVal, compIndexedVal);
     }
 
@@ -202,6 +216,17 @@ public class SolrFieldMapImpl implements SolrFieldMap {
     @Override
     public String[] getFacetFields() {
         return facetFields;
+    }
+
+    /**
+     * Getter method for retrieving buffer size which
+     * describes the maximum rows that will be fetched in a go.
+     *
+     * @return It return the search buffer size.
+     */
+    @Override
+    public int getBufferSize() {
+        return bufferSize;
     }
 
     /**

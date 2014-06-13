@@ -1,6 +1,6 @@
 package com.ig.testdrive.integration.solr.servlets;
 
-import com.ig.testdrive.commons.util.CommonMethods;
+import com.ig.testdrive.commons.util.SolrSearchUtil;
 import com.ig.testdrive.integration.solr.beans.SolrFieldMappingBean;
 import com.ig.testdrive.integration.solr.service.SolrFieldMap;
 import org.apache.felix.scr.annotations.*;
@@ -145,7 +145,7 @@ public class SolrPageServlet extends SlingSafeMethodsServlet {
             tempUrl = resource.getPath() + "/jcr:content";
             Resource tempResource = resourceResolver.getResource(tempUrl);
             pageValueAap = tempResource.adaptTo(ValueMap.class);
-            xmlData = CommonMethods.parseFieldMap(pageValueAap, pagefieldMap, xmlData);
+            xmlData = SolrSearchUtil.parseFieldMap(pageValueAap, pagefieldMap, xmlData);
 
             LOG.debug("xmldata for page so far is" + xmlData);
             xmlData = getXMLDataForComp(xmlData, compFieldMap, tempResource, resourceResolver);
@@ -229,7 +229,7 @@ public class SolrPageServlet extends SlingSafeMethodsServlet {
                 LOG.debug("reference resource value map is " + compValueMap);
             }
             LOG.debug("Field map" + fieldsInfo);
-            xmlData = CommonMethods.parseFieldMap(compValueMap, fieldsInfo, xmlData);
+            xmlData = SolrSearchUtil.parseFieldMap(compValueMap, fieldsInfo, xmlData);
         }
         LOG.debug("Returning from getXMLDataForResourceType" + xmlData);
         return xmlData;

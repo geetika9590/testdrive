@@ -34,13 +34,20 @@ table.searchRight{
 div.searchTrends {
     text-align: justify;
 }
+/*
+#paginate  a:visited{
+    color:purple;
+}
 
+#paginate  a:active{
+    color: black;
+    text-decoration: underline;
+}*/
 div.searchRight p {
     text-align: center;
     font-weight: bold;
     margin-bottom: 5px;
 }
-
 div.search span.icon img {
     width: 16px;
     height: 16px;

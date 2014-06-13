@@ -105,7 +105,7 @@ public class SolrParametersServlet extends SlingSafeMethodsServlet {
      *
      * @param maps
      */
-    public void addFields(HashMap[] maps) {
+    public void parseFieldMaps(HashMap[] maps) {
         for (HashMap map : maps) {
             LOG.debug("map received is" + map);
             Set set = map.keySet();
@@ -135,7 +135,7 @@ public class SolrParametersServlet extends SlingSafeMethodsServlet {
     public JSONArray addAllFields() throws JSONException {
 
         HashMap[] maps = {solrFieldMap.getPageFieldMap(), solrFieldMap.getCompFieldMap(), solrFieldMap.getAssetFieldMap()};
-        addFields(maps);
+        parseFieldMaps(maps);
         Iterator iterator = propertySet.iterator();
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();

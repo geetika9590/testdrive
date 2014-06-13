@@ -16,9 +16,9 @@ import java.util.Set;
  * Date: 19/5/14
  * Time: 10:32 AM
  */
-public class CommonMethods {
+public class SolrSearchUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CommonMethods.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SolrSearchUtil.class);
 
     /**
      * This method parse the field map for CQ pages and updates the xmlfor pushing data to solr.
@@ -37,19 +37,19 @@ public class CommonMethods {
                 Object[] arr = (Object[]) valueMap.get(propName);
                 for (Object value : arr) {
                     if (value != null) {
-                        value = CommonMethods.stripHTML(value.toString());
+                        value = SolrSearchUtil.stripHTML(value.toString());
                         value = StringEscapeUtils.escapeXml(value.toString());
                         LOG.debug("value after escaping character is" + value);
-                        xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
+                        xmlData = SolrSearchUtil.getXMLFieldTag(xmlData, type, value);
                     }
                 }
             } else {
                 String value = String.valueOf(valueMap.get(propName));
                 if (value != null && !value.equalsIgnoreCase("null")) {
-                    value = CommonMethods.stripHTML(value.toString());
+                    value = SolrSearchUtil.stripHTML(value.toString());
                     value = StringEscapeUtils.escapeXml(value.toString());
                     LOG.debug("value after escaping character is" + value);
-                    xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
+                    xmlData = SolrSearchUtil.getXMLFieldTag(xmlData, type, value);
                 }
             }
         }
@@ -74,19 +74,19 @@ public class CommonMethods {
                 Object[] arr = (Object[]) assetMetadata.get(propName);
                 for (Object value : arr) {
                     if (value != null) {
-                        value = CommonMethods.stripHTML(value.toString());
+                        value = SolrSearchUtil.stripHTML(value.toString());
                         value = StringEscapeUtils.escapeXml(value.toString());
                         LOG.debug("value after escaping character is" + value);
-                        xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
+                        xmlData = SolrSearchUtil.getXMLFieldTag(xmlData, type, value);
                     }
                 }
             } else {
                 String value = String.valueOf(assetMetadata.get(propName));
                 if (value != null && !value.equalsIgnoreCase("null")) {
-                    value = CommonMethods.stripHTML(value.toString());
+                    value = SolrSearchUtil.stripHTML(value.toString());
                     value = StringEscapeUtils.escapeXml(value.toString());
                     LOG.debug("value after escaping character is" + value);
-                    xmlData = CommonMethods.getXMLFieldTag(xmlData, type, value);
+                    xmlData = SolrSearchUtil.getXMLFieldTag(xmlData, type, value);
                 }
             }
         }
@@ -113,19 +113,19 @@ public class CommonMethods {
                 Object[] arr = (Object[]) valueMap.get(solrFieldMappingBean.getCqField());
                 for (Object value : arr) {
                     if (value != null) {
-                        value = CommonMethods.stripHTML(value.toString());
+                        value = SolrSearchUtil.stripHTML(value.toString());
                         value = StringEscapeUtils.escapeXml(value.toString());
                         LOG.debug("value after escaping character is" + value);
-                        xmlData = CommonMethods.getXMLFieldTag(xmlData, solrFieldMappingBean.getSolrField(), value);
+                        xmlData = SolrSearchUtil.getXMLFieldTag(xmlData, solrFieldMappingBean.getSolrField(), value);
                     }
                 }
             } else {
                 String value = String.valueOf(valueMap.get(solrFieldMappingBean.getCqField()));
                 if (value != null && !value.equalsIgnoreCase("null")) {
-                    value = CommonMethods.stripHTML(value.toString());
+                    value = SolrSearchUtil.stripHTML(value.toString());
                     value = StringEscapeUtils.escapeXml(value.toString());
                     LOG.debug("value after escaping character is" + value);
-                    xmlData = CommonMethods.getXMLFieldTag(xmlData, solrFieldMappingBean.getSolrField(), value);
+                    xmlData = SolrSearchUtil.getXMLFieldTag(xmlData, solrFieldMappingBean.getSolrField(), value);
                 }
             }
         }
